@@ -1,0 +1,1 @@
+java -jar service-discovery/target/service-discovery-0.0.1-SNAPSHOT.jar com.bfs.servicediscovery.ServiceDiscoveryApplication 

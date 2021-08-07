@@ -1,0 +1,23 @@
+server:
+  port: 8081
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+  instance:
+    preferIpAddress: true
+
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: movie-store
+          uri: lb://movie-store
+          predicates:
+            - Path=/movie/**
+        - id: book-store
+          uri: lb://book-store
+          predicates:
+            - Path=/book/**
