@@ -6,7 +6,7 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/YIYUAN-REN/timesheet-management-system.git
+          uri: https://github.com/tlan-beaconfire/cloud-config
           clone-on-start: true
           skip-ssl-validation: true
   rabbitmq:

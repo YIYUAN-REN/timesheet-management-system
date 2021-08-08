@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8080
 
 eureka:
   client:
@@ -13,11 +13,15 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: movie-store
-          uri: lb://movie-store
+        - id: summary
+          uri: lb://summary
           predicates:
-            - Path=/movie/**
-        - id: book-store
-          uri: lb://book-store
+            - Path=/summary/**
+        - id: timesheet
+          uri: lb://timesheet
           predicates:
-            - Path=/book/**
+            - Path=/timesheet/**
+        - id: contact
+          uri: lb://profile
+          predicates:
+            - Path=/profile/**
