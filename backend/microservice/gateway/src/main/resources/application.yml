@@ -26,6 +26,6 @@ spring:
           predicates:
             - Path=/timesheet/**
         - id: contact
-          uri: lb://contact
+          uri: lb://profile
           predicates:
-            - Path=/contact/**
+            - Path=/profile/**
