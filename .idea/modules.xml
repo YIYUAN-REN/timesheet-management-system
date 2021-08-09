@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/backend/microservice/gateway/gateway.iml" filepath="$PROJECT_DIR$/backend/microservice/gateway/gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/backend/microservice/service-discovery/service-discovery.iml" filepath="$PROJECT_DIR$/backend/microservice/service-discovery/service-discovery.iml" />
+      <module fileurl="file://$PROJECT_DIR$/backend/microservice/timesheet/timesheet.iml" filepath="$PROJECT_DIR$/backend/microservice/timesheet/timesheet.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/timesheet-management-system.iml" filepath="$PROJECT_DIR$/.idea/timesheet-management-system.iml" />
     </modules>
   </component>
