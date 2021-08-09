@@ -1,10 +1,13 @@
-import Timesheet from "./components/timesheet/Timesheet";
+import  ProfileEdit   from './components/profile/profile';
 
 function App() {
   return (
     <div>
-      <Timesheet />
+   
+      <ProfileEdit /> 
     </div>
+
+
   );
 }
 
