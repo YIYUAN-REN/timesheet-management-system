@@ -90,7 +90,7 @@ class ProfileEdit extends React.Component{
             console.log(stateCopy);
 
 
-            alert('A form was submitted: ' + this.state.value);
+            alert('A form was submitted: ');
             event.preventDefault();
 
 
