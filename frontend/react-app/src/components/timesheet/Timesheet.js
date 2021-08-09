@@ -1,12 +1,52 @@
 import React, {Component} from "react";
+import axios from "axios";
 import "./Timesheet.css";
 
 class Timesheet extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			userId: 0,
+			weekEnding: "",
+			days: [],
+			totalBillingHours: 0,
+			totalCompensatedHours: 0,
+			submissionStatus: "",
+			approvalStatus: "",
+			comment: ""
+		}
+	}
+
+	componentDidMount() {
+		let userId = 1;
+		let weekEnding = "01/09/2021";
+		// let userId = localStorage.getItem("userId");
+    // let weekEnding = localStorage.getItem("weekEnding");
+		axios
+      .get("http://localhost:8082/timesheet/getTimesheet?userId=" + userId + "&weekEnding=" + weekEnding)
+      .then((response) => {
+        const timesheet = response.data;
+        this.setState({
+          userId: timesheet.userId,
+          weekEnding: timesheet.weekEnding,
+					days: timesheet.days,
+					totalBillingHours: timesheet.totalBillingHours,
+          totalCompensatedHours: timesheet.totalCompensatedHours,
+          submissionStatus: timesheet.submissionStatus,
+          approvalStatus: timesheet.approvalStatus
+        });
+      });
+	}
+
+	handleWeekEndingChange = (e) => {
+		
+	}
+
   render() {
     return (
 		<>
 			<div>
-				<label for="weekEnding">Week Ending</label>
+				<label for="weekEnding" onChange={this.handleWeekEndingChange}>Week Ending</label>
 				<input id="weekEnding" type="date" min="2021-01-01" max="2021-12-31" />
 				<label for="billingHours">Total Billing Hours</label>
 				<input id="billingHours" type="text" />
