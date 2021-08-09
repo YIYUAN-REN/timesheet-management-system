@@ -7,10 +7,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="service-discovery" />
-        <module name="config-server" />
-        <module name="gateway" />
         <module name="timesheet" />
+        <module name="config-server" />
+        <module name="profile" />
+        <module name="gateway" />
+        <module name="service-discovery" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -18,6 +19,7 @@
       <module name="config-server" target="1.8" />
       <module name="gateway" target="1.8" />
       <module name="movie-store" target="1.8" />
+      <module name="profile" target="1.8" />
       <module name="service-discovery" target="1.8" />
       <module name="timesheet" target="1.8" />
     </bytecodeTargetLevel>
@@ -28,6 +30,7 @@
       <module name="config-server" options="-parameters" />
       <module name="gateway" options="-parameters" />
       <module name="movie-store" options="-parameters" />
+      <module name="profile" options="-parameters" />
       <module name="service-discovery" options="-parameters" />
       <module name="timesheet" options="-parameters" />
     </option>

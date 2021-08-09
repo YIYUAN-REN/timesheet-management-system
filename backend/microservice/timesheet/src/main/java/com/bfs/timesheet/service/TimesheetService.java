@@ -14,8 +14,12 @@ public class TimesheetService {
     @Autowired
     private TimesheetRepository timesheetRepository;
 
-    public ResponseEntity<List<Timesheet>> getAllTimesheets(String userID){
-        List<Timesheet> list = timesheetRepository.findByUserId(Integer.parseInt(userID));
+    public Timesheet getTimesheet(int userId, String weekEnding) {
+        return timesheetRepository.findByUserIdAndWeekEnding(userId, weekEnding);
+    }
+
+    public ResponseEntity<List<Timesheet>> getAllTimesheets(String userId){
+        List<Timesheet> list = timesheetRepository.findByUserId(Integer.parseInt(userId));
         return ResponseEntity.status(HttpStatus.CREATED).body(list);
     }
 }

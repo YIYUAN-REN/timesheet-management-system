@@ -8,5 +8,6 @@ import java.util.List;
 
 @Repository
 public interface TimesheetRepository extends MongoRepository<Timesheet, String> {
+    Timesheet findByUserIdAndWeekEnding(Integer userId, String weekEnding);
     List<Timesheet> findByUserId(Integer userId);
 }

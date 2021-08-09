@@ -4,14 +4,14 @@ import { Table } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 class Summary extends Component {
-    userID= "1";
+    userId= "1";
 
     state = {
         timeList:[]
     };
 
     componentDidMount() {
-        axios.get(`http://localhost:8082/getAllTimesheets?userID=`+this.userID)
+        axios.get(`http://localhost:8082/getAllTimesheets?userId=`+this.userId)
             .then(res => {
                 console.log(res.data)
                 this.setState({timeList: res.data})
