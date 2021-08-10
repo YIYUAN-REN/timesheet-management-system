@@ -12,5 +12,7 @@ public interface ProfileRepository extends MongoRepository<ProfileUser, Integer>
 	
 	ProfileUser findById(int id);
 	
+	ProfileUser findByUserid(int id);
+	
 
 }
