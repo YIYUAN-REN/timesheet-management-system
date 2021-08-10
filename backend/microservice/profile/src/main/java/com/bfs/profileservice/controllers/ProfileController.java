@@ -34,6 +34,7 @@ public class ProfileController {
     	ProfileUser pu = new ProfileUser();
      
     	pu.setId(100);
+    	pu.setUserid(request.getUserid());
     	pu.setEmail(request.getEmail());
     	System.out.println("bug check email " + request.getEmail());
     	pu.setEmergencyContacts(request.getEmergencyContacts());

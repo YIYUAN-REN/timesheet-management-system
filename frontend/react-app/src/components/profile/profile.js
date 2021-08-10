@@ -10,28 +10,39 @@ class ProfileEdit extends React.Component{
                super(props);
                
                 this.state = {
-
+                    userid: 0,
                     phoneNumber : '',
                     email : '',
                     fullAddress:'',
                     profilePicturePath:'',
-                    emergencyContacts: []
+                    emergencyContacts: [],
+                    fullname:'',
+                    avatarlink:'',
+                    reload: false
 
                 };
 
             this.fetchProfile();
 
             this.handleSubmit = this.handleSubmit.bind(this);
-
+            this.refreshPage = this.refreshPage.bind(this);
             
 
             //   const data = this.fetchProfile();
             //   this.state.phone = data.phoneNumber;
         }
 
-        
+        componentDidMount()
+        {
+            console.log('component did mount');
+        }
  
-
+        refreshPage = () => {
+          this.setState(
+            {reload: true},
+            () => this.setState({reload: false})
+          )
+        }
 
         fetchProfile() {
 
@@ -45,6 +56,14 @@ class ProfileEdit extends React.Component{
                     this.setState({...this.state, fullAddress:response.data.fullAddress});
                     this.setState({...this.state, profilePicturePath:response.data.profilePicturePath});
                     this.setState({...this.state, emergencyContacts:response.data.emergencyContacts});
+
+                     let strarr  = response.data.profilePicturePath.split('/',3);
+
+                     console.log(strarr[1]);
+
+                     let fullavatarlink = 'https://timesheetmanagement6.s3.amazonaws.com/' + strarr[1] + '/' +strarr[2];
+                    this.setState({...this.state, avatarlink : fullavatarlink });
+                    //  https://timesheetmanagement6.s3.amazonaws.com/avatar0/default.png
 
                     console.log(this.state);
  
@@ -124,24 +143,47 @@ class ProfileEdit extends React.Component{
                   //handle error
                   console.log(response);
                 });
-
-        // alert('A form was submitted: ' + this.state);
-
-        // fetch('http://localhost:9090/profile/editcontact', {
-        //     method: 'POST',
-        //     // We convert the React state to JSON and send it as the POST body
-        //     body: JSON.stringify(this.state)
-        //   }).then(function(response) {
-        //     console.log(response)
-        //     return response.json();
-        //   });
-    
-        event.preventDefault();
-
  
+    
+        event.preventDefault();          }
 
-          }
+        
+//-------------------------------Toby's file upload start--------------
 
+onFileChangeHandler=event=>{
+
+  console.log(event.target.files[0])
+
+  this.setState({
+    selectedFile: event.target.files[0],
+    loaded: 0,
+    })
+
+}
+
+
+onFileClickHandler = () => {
+  const data = new FormData() 
+  data.append('title','avatar');
+  data.append('userid',this.state.userid);
+  data.append('file', this.state.selectedFile);
+
+  console.log(data);
+
+  axios.post("http://localhost:9090/file/uploadfile", data, {   //------------url needs to be changed later
+      // receive two    parameter endpoint url ,form data
+  })
+  .then(res => { // then print response status
+    console.log(res);
+    this.refreshPage();
+    window.location.reload(); 
+   })
+
+   
+
+}
+
+//-------------------------------Toby's  fileupload end----------------
 
 
 
@@ -149,7 +191,19 @@ class ProfileEdit extends React.Component{
 
 render() {
     return (
-        <div>
+        <div container="container">
+           <div class="row">
+           <div class="col-3">
+           <h4>Your Profile</h4>
+           <img src={this.state.avatarlink} alt="profile" class="img-thumbnail"></img>
+
+
+ 
+      {/* Toby's file upload start */}
+			<input type="file" name="file" onChange={this.onFileChangeHandler}/> <button type="button" class="btn btn-success btn-block" onClick={this.onFileClickHandler}>Upload</button> 
+			{/* Toby's file upload end */}
+       </div>
+      <div class="col-6">
       <form onSubmit={this.handleSubmit}>
       
          
@@ -169,14 +223,20 @@ render() {
        <div>Last Name: <input type="text" value={contact.lastName} onChange={(e) => this.changeContact(e,index,"lastName")} /> </div>  
        <div>Phone: <input type="text" value={contact.phone} onChange={(e) => this.changeContact(e,index,"phone")} /> </div>  
        
-       </div>
+
+
+       </div> 
        ) } 
       
 
 
             <input type="submit" value="Submit" />
-      </form>
 
+
+
+      </form>
+      </div>
+ </div>
       </div>
     );
   }
