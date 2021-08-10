@@ -7,40 +7,61 @@ class Summary extends Component {
     userId= "1";
 
     state = {
-        timeList:[]
+        timeList:[],
+        count: 5,
+        show: "Show More",
     };
 
+    renderTableData(){
+        return this.state.timeList.
+            slice(0, this.state.count).map((person, ) => {
+            return (
+                <tr key={person.endDate}>
+                    <td>{person.weekEnding}</td>
+                    <td>{person.days[0].totalHours}</td>
+                    <td>{person.submissionStatus}</td>
+                    <td>{person.approvalStatus}</td>
+                    <td>
+                        {' '}
+                        <Link to={`/timesheet/${person.endDate}`}>
+                            {person.approvalStatus === 'Approved' ? 'Edit' : 'View'}
+                        </Link>
+                    </td>
+                    <td>{person.comment}</td>
+                </tr>
+            );
+        })
+
+    }
+
     componentDidMount() {
-        axios.get(`http://localhost:8082/getAllTimesheets?userId=`+this.userId)
+        axios.get(`http://localhost:8082/timesheet/getAllTimesheets/`+this.userId)
             .then(res => {
                 console.log(res.data)
                 this.setState({timeList: res.data})
             })
     }
 
+    handleShowMore = () => {
+        if (this.state.count === 5) {
+            this.setState({
+                count: this.state.timeList.length,
+                show: "Show Less",
+            });
+        } else {
+            this.setState({
+                count: 5,
+                show: "Show More",
+            });
+        }
+    };
+
 
     render() {
-        const tableRows = () => {
-            return this.state.timeList.map((person) => {
-                return (
-                    <tr key={person.endDate}>
-                        <td>{person.endDate}</td>
-                        <td>{person.totalHours}</td>
-                        <td>{person.submissionStatus}</td>
-                        <td>{person.approveStatus}</td>
-                        <td>
-                            {' '}
-                            <Link to={`/timesheet/${person.endDate}`}>
-                                {person.approvedStatus === 'Approved' ? 'Edit' : 'View'}
-                            </Link>
-                        </td>
-                        <td>{person.comment}</td>
-                    </tr>
-                );
-            });
-        };
+        const count = this.count;
 
         return (
+            <div>
             <Table striped bordered hover>
                 <thead>
                 <tr>
@@ -52,8 +73,19 @@ class Summary extends Component {
                     <th>Comments</th>
                 </tr>
                 </thead>
-                <tbody>{tableRows()}</tbody>
+                {/*<tbody>{tableRows()}</tbody>*/}
+                <tbody>{this.renderTableData()}</tbody>
             </Table>
+                <button
+                    type="button"
+                    className="button-time"
+                    button-time
+                    onClick={this.handleShowMore}
+                >
+                    {this.state.show}
+                </button>
+            </div>
+
         )
     }
 }
