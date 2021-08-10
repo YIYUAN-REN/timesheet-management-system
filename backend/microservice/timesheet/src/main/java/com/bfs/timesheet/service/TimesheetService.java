@@ -26,7 +26,6 @@ public class TimesheetService {
                 day.setDate("01/03/2021");
                 day.setStartTime("N/A");
                 day.setEndTime("N/A");
-                day.setTotalHours(0.00);
                 day.setIsFloating(false);
                 day.setIsHoliday(false);
                 day.setIsVacation(false);
@@ -35,7 +34,6 @@ public class TimesheetService {
                 day.setDate("01/04/2021");
                 day.setStartTime("9:00 AM");
                 day.setEndTime("6:00 PM");
-                day.setTotalHours(8.00);
                 day.setIsFloating(false);
                 day.setIsHoliday(false);
                 day.setIsVacation(false);
@@ -44,7 +42,6 @@ public class TimesheetService {
                 day.setDate("01/05/2021");
                 day.setStartTime("9:00 AM");
                 day.setEndTime("6:00 PM");
-                day.setTotalHours(8.00);
                 day.setIsFloating(false);
                 day.setIsHoliday(false);
                 day.setIsVacation(false);
@@ -53,7 +50,6 @@ public class TimesheetService {
                 day.setDate("01/06/2021");
                 day.setStartTime("9:00 AM");
                 day.setEndTime("6:00 PM");
-                day.setTotalHours(8.00);
                 day.setIsFloating(false);
                 day.setIsHoliday(false);
                 day.setIsVacation(false);
@@ -62,7 +58,6 @@ public class TimesheetService {
                 day.setDate("01/07/2021");
                 day.setStartTime("9:00 AM");
                 day.setEndTime("6:00 PM");
-                day.setTotalHours(8.00);
                 day.setIsFloating(false);
                 day.setIsHoliday(false);
                 day.setIsVacation(false);
@@ -71,7 +66,6 @@ public class TimesheetService {
                 day.setDate("01/08/2021");
                 day.setStartTime("9:00 AM");
                 day.setEndTime("6:00 PM");
-                day.setTotalHours(8.00);
                 day.setIsFloating(false);
                 day.setIsHoliday(false);
                 day.setIsVacation(false);
@@ -80,7 +74,6 @@ public class TimesheetService {
                 day.setDate("01/09/2021");
                 day.setStartTime("N/A");
                 day.setEndTime("N/A");
-                day.setTotalHours(0.00);
                 day.setIsFloating(false);
                 day.setIsHoliday(false);
                 day.setIsVacation(false);

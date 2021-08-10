@@ -35,8 +35,7 @@ class Timesheet extends Component {
 					totalBillingHours: timesheet.totalBillingHours,
 					totalCompensatedHours: timesheet.totalCompensatedHours,
 					submissionStatus: timesheet.submissionStatus,
-					approvalStatus: timesheet.approvalStatus,
-					comment: timesheet.comment
+					approvalStatus: timesheet.approvalStatus
 				});
 			});
 
@@ -97,12 +96,82 @@ class Timesheet extends Component {
 			});
 	}
 
+	// e.g) 9:00 AM => 9, 6:00 PM => 18
+	getNumberTime(time) {
+		if (time == "N/A") {
+			return 0;
+		}
+
+		let [slice, suffix] = time.split(" ");
+		let [hour, minute] = slice.split(":");
+		hour = parseFloat(hour);
+		minute = parseFloat(minute) / 60;
+		let addition = suffix == "PM" && hour != 12 ? 12 : 0;
+		return hour + minute + addition;
+	}
+
+	getTotalBillingHours(days) {
+		let hours = 0;
+		for (let i = 0; i < days.length; i++) {
+			if (days[i].isFloating || days[i].isHoliday || days[i].isVacation) {
+				continue;
+			}
+			if (days[i].endTime == "N/A" || days[i].startTime == "N/A" || this.getNumberTime(days[i].endTime) - this.getNumberTime(days[i].startTime) < 0) {
+				continue;
+			}
+			hours += this.getNumberTime(days[i].endTime) - this.getNumberTime(days[i].startTime);
+		}
+		return hours;
+	}
+
+	getTotalCompensatedHours(days) {
+		let hours = 0;
+		for (let i = 0; i < days.length; i++) {
+			if (days[i].isFloating || days[i].isHoliday || days[i].isVacation) {
+				hours += days[i].isFloating * 8 + days[i].isHoliday * 8 + days[i].isVacation * 8;
+				continue;
+			}
+			
+			if (days[i].endTime == "N/A" || days[i].startTime == "N/A" || this.getNumberTime(days[i].endTime) - this.getNumberTime(days[i].startTime) < 0) {
+				continue;
+			}
+			hours += this.getNumberTime(days[i].endTime) - this.getNumberTime(days[i].startTime);
+		}
+		return hours;
+	}
+
 	handleStartTimeChange = (index, e) => {
-		// start time
+		// change startTime
+		let newDays = this.state.days;
+		newDays[index].startTime = e.target.value;
+		this.setState({
+			days: newDays
+		});
+
+		// change hours
+		let newTotalBillingHours = this.getTotalBillingHours(newDays);
+		let newTotalCompensatedHours = this.getTotalCompensatedHours(newDays);
+		this.setState({
+			totalBillingHours: newTotalBillingHours,
+			totalCompensatedHours: newTotalCompensatedHours
+		});
 	};
 
 	handleEndTimeChange = (index, e) => {
-		// end time
+		// change endTime
+		let newDays = this.state.days;
+		newDays[index].endTime = e.target.value;
+		this.setState({
+			days: newDays
+		});
+
+		// change hours
+		let newTotalBillingHours = this.getTotalBillingHours(newDays);
+		let newTotalCompensatedHours = this.getTotalCompensatedHours(newDays);
+		this.setState({
+			totalBillingHours: newTotalBillingHours,
+			totalCompensatedHours: newTotalCompensatedHours
+		});
 	};
 
 	render() {
@@ -112,9 +181,9 @@ class Timesheet extends Component {
 					<label htmlFor="weekEnding">Week Ending</label>
 					<input id="weekEnding" type="date" value={this.state.weekEndingFormat} onChange={this.handleWeekEndingChange} />
 					<label htmlFor="billingHours">Total Billing Hours</label>
-					<textarea id="billingHours" rows="1" cols="10" disabled></textarea>
+					<textarea id="billingHours" value={this.state.totalBillingHours} rows="1" cols="10" disabled />
 					<label htmlFor="compensatedHours">Total Compensated Hours</label>
-					<textarea id="compensatedHours" rows="1" cols="10" disabled></textarea>
+					<textarea id="compensatedHours" value={this.state.totalCompensatedHours} rows="1" cols="10" disabled />
 				</div>
 
 				<div>
@@ -198,7 +267,10 @@ class Timesheet extends Component {
 										</select>
 									</td>
 
-									<td>{item.totalHours}</td>
+									<td>{
+										item.endTime == "N/A" || item.startTime == "N/A" || this.getNumberTime(item.endTime) - this.getNumberTime(item.startTime) < 0 ?
+										0 : this.getNumberTime(item.endTime) - this.getNumberTime(item.startTime)
+									}</td>
 									<td>{item.isFloating ? "[X]" : "[_]"}</td>
 									<td>{item.isHoliday ? "[X]" : "[_]"}</td>
 									<td>{item.isVacation ? "[X]" : "[_]"}</td>

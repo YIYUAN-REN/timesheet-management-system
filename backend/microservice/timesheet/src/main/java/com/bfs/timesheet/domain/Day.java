@@ -14,7 +14,6 @@ public class Day {
     String date;
     String startTime;
     String endTime;
-    Double totalHours;
     Boolean isFloating;
     Boolean isHoliday;
     Boolean isVacation;
