@@ -135,10 +135,10 @@ class Timesheet extends Component {
 						<tbody>
 							{this.state.days.map((item, index) => (
 								<tr key={index}>
-									<th>{item.day}</th>
-									<th>{item.date}</th>
+									<td>{item.day}</td>
+									<td>{item.date}</td>
 
-									<th>
+									<td>
 										<select value={item.startTime} onChange={(e) => this.handleStartTimeChange(index, e)}>
 											<option value="N/A">N/A</option>
 											<option value="0:00 AM">0:00 AM</option>
@@ -166,9 +166,9 @@ class Timesheet extends Component {
 											<option value="10:00 PM">10:00 PM</option>
 											<option value="11:00 PM">11:00 PM</option>
 										</select>
-									</th>
+									</td>
 
-									<th>
+									<td>
 										<select value={item.endTime} onChange={(e) => this.handleEndTimeChange(index, e)}>
 											<option value="N/A">N/A</option>
 											<option value="0:00 AM">0:00 AM</option>
@@ -196,12 +196,12 @@ class Timesheet extends Component {
 											<option value="10:00 PM">10:00 PM</option>
 											<option value="11:00 PM">11:00 PM</option>
 										</select>
-									</th>
+									</td>
 
-									<th>{item.totalHours}</th>
-									<th>{item.isFloating ? "[X]" : "[_]"}</th>
-									<th>{item.isHoliday ? "[X]" : "[_]"}</th>
-									<th>{item.isVacation ? "[X]" : "[_]"}</th>
+									<td>{item.totalHours}</td>
+									<td>{item.isFloating ? "[X]" : "[_]"}</td>
+									<td>{item.isHoliday ? "[X]" : "[_]"}</td>
+									<td>{item.isVacation ? "[X]" : "[_]"}</td>
 								</tr>
 							))}
 						</tbody>
