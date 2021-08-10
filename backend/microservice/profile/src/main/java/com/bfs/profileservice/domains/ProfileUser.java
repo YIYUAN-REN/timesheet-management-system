@@ -22,7 +22,7 @@ public class ProfileUser {
 	
 	  	@Id
 	    private Integer id;
-		
+
 		private String phoneNumber;	
 		  
 		  private String email;
