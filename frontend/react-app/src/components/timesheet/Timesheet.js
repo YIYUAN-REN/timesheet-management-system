@@ -131,7 +131,7 @@ class Timesheet extends Component {
 				hours += days[i].isFloating * 8 + days[i].isHoliday * 8 + days[i].isVacation * 8;
 				continue;
 			}
-			
+
 			if (days[i].endTime == "N/A" || days[i].startTime == "N/A" || this.getNumberTime(days[i].endTime) - this.getNumberTime(days[i].startTime) < 0) {
 				continue;
 			}
@@ -179,65 +179,65 @@ class Timesheet extends Component {
 
 	//-------------------------------Toby's file upload start--------------
 
-onFileChangeHandler=event=>{
+	onFileChangeHandler = event => {
 
-	console.log(event.target.files[0])
+		console.log(event.target.files[0])
 
-	this.setState({
-		selectedFile: event.target.files[0],
-		loaded: 0,
-	  })
-
-}
-
-
-
-onFileClickHandler = () => {
-	const data = new FormData() 
-	data.append('title','timesheet');
-	data.append('userid',"0");
-	data.append('file', this.state.selectedFile);
-
-	console.log(data);
-
-	axios.post("http://localhost:9090/file/uploadfile", data, {  	 //------------url needs to be changed later
-	  // receive two    parameter endpoint url ,form data
-	})
-	.then(res => { // then print response status
-
-		console.log(res);
-	 })
-
-}
-
-//-------------------------------Toby's  fileupload end----------------
-
-
-//-------Toby B5 Start
-
-togglePTO(currentindex , currenttype ){
-	
-	console.log('b5 toggled index is ' + currentindex +'type is ' +currenttype);
-
-	let stateCopy = this.state ; //
-
-
-    
-	if(currenttype == 'floating'){//
-
-		stateCopy.days[currentindex]['isFloating'] = !stateCopy.days[currentindex]['isFloating'];
-		
-
+		this.setState({
+			selectedFile: event.target.files[0],
+			loaded: 0,
+		})
 
 	}
-            
-	
 
-	this.setState(stateCopy);//
 
-}
 
-//-------Toby B5 End
+	onFileClickHandler = () => {
+		const data = new FormData()
+		data.append('title', 'timesheet');
+		data.append('userid', "0");
+		data.append('file', this.state.selectedFile);
+
+		console.log(data);
+
+		axios.post("http://localhost:9090/file/uploadfile", data, {  	 //------------url needs to be changed later
+			// receive two    parameter endpoint url ,form data
+		})
+			.then(res => { // then print response status
+
+				console.log(res);
+			})
+
+	}
+
+	//-------------------------------Toby's  fileupload end----------------
+
+
+	//-------Toby B5 Start
+
+	togglePTO(currentindex, currenttype) {
+
+		console.log('b5 toggled index is ' + currentindex + 'type is ' + currenttype);
+
+		let stateCopy = this.state; //
+
+
+
+		if (currenttype == 'floating') {//
+
+			stateCopy.days[currentindex]['isFloating'] = !stateCopy.days[currentindex]['isFloating'];
+
+
+
+		}
+
+
+
+		this.setState(stateCopy);//
+
+	}
+
+	//-------Toby B5 End
 
 	render() {
 		return (
@@ -334,13 +334,13 @@ togglePTO(currentindex , currenttype ){
 
 									<td>{
 										item.endTime == "N/A" || item.startTime == "N/A" || this.getNumberTime(item.endTime) - this.getNumberTime(item.startTime) < 0 ?
-										0 : this.getNumberTime(item.endTime) - this.getNumberTime(item.startTime)
+											0 : this.getNumberTime(item.endTime) - this.getNumberTime(item.startTime)
 									}</td>
 									{/* //-------Toby B5 Start */}
 
-									<td>{item.isFloating ? <span onClick={ ()=> this.togglePTO(index, 'floating') } >[X]</span>  : <span onClick={()=> this.togglePTO(index, 'floating')}>[_]</span>}</td>
-									<td>{item.isHoliday ?  <span onClick={this.togglePTO}>[X]</span>  : <span onClick={this.togglePTO}>[_]</span>}</td>
-									<td>{item.isVacation ?  <span onClick={this.togglePTO}>[X]</span>  : <span onClick={this.togglePTO}>[_]</span>}</td>
+									<td>{item.isFloating ? <span onClick={() => this.togglePTO(index, 'floating')} >[X]</span> : <span onClick={() => this.togglePTO(index, 'floating')}>[_]</span>}</td>
+									<td>{item.isHoliday ? <span onClick={this.togglePTO}>[X]</span> : <span onClick={this.togglePTO}>[_]</span>}</td>
+									<td>{item.isVacation ? <span onClick={this.togglePTO}>[X]</span> : <span onClick={this.togglePTO}>[_]</span>}</td>
 
 									{/* //-------Toby B5 end		 */}
 								</tr>
@@ -357,12 +357,12 @@ togglePTO(currentindex , currenttype ){
 
 
 
-				 {/* Toby's file upload start */}
-			<input type="file" name="file" onChange={this.onFileChangeHandler}/> <button type="button" class="btn btn-success btn-block" onClick={this.onFileClickHandler}>Upload</button> 
-			{/* Toby's file upload end */}
+					{/* Toby's file upload start */}
+					<input type="file" name="file" onChange={this.onFileChangeHandler} /> <button type="button" class="btn btn-success btn-block" onClick={this.onFileClickHandler}>Upload</button>
+					{/* Toby's file upload end */}
 
 
-			
+
 					<button type="button">Save</button>
 				</div>
 			</>
