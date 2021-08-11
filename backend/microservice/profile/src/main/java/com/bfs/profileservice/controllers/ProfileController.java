@@ -33,8 +33,8 @@ public class ProfileController {
     	
     	ProfileUser pu = new ProfileUser();
      
-    	pu.setId(100);
-    	pu.setUserid(request.getUserid());
+     
+    	pu.setUserId(request.getUserId());
     	pu.setEmail(request.getEmail());
     	System.out.println("bug check email " + request.getEmail());
     	pu.setEmergencyContacts(request.getEmergencyContacts());
@@ -46,9 +46,9 @@ public class ProfileController {
     }
     
     @GetMapping("getcontact/{uid}")
-    public  Optional<ProfileUser>  getContact( @PathVariable Integer uid) {
+    public  ProfileUser  getContact( @PathVariable Integer uid) {
     	
-    	return profileRepository.findById(uid);
+    	return profileRepository.findByUserId(uid) ;
     	
     }
     

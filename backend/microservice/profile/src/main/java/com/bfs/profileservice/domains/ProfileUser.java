@@ -1,5 +1,6 @@
 package com.bfs.profileservice.domains;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -21,9 +22,9 @@ import lombok.ToString;
 public class ProfileUser {
 	
 	  	@Id
-	    private Integer id;
+	    private ObjectId id;
 	  	
-	  	private Integer userid;
+	  	private Integer userId;
 		
 		private String phoneNumber;	
 		  
