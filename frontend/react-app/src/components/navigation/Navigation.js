@@ -19,7 +19,7 @@ export default class Navigation extends Component {
                             <Link to={'/'} className="nav-link"> Login </Link>
                         </li>
                         <li className="nav-item" role="presentation">
-                            <Link to={'/summary'} className="nav-link"> Summary </Link>
+                            <Link to={'/summary'} className="nav-link">Summary</Link>
                         </li>
                         <li className="nav-item" role="presentation">
                             <Link to={'/timesheet'} className="nav-link">TimeSheet</Link>

@@ -23,7 +23,7 @@ public class TimesheetController {
     TemplateService templateService;
 
     // userId=1
-    @PostMapping("/postTimesheet")
+    @PostMapping("postTimesheet")
     public void postTimesheet(@RequestParam Integer id) {
         timesheetService.postTimesheet(id);
     }

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import "./Timesheet.css";
+import { Holidays } from './Holidays'
 
 class Timesheet extends Component {
 	constructor(props) {
@@ -8,41 +9,89 @@ class Timesheet extends Component {
 		this.state = {
 			userId: 0,
 			weekEnding: "",
+
 			days: [],
+
 			totalBillingHours: 0,
 			totalCompensatedHours: 0,
 			submissionStatus: "",
 			approvalStatus: "",
 			comment: "",
+			weekEndingFormat: "",
 
-			weekEndingFormat: ""
+			floatingsTaken:[],
+			vacationsTaken:[],
+		
+			 
 		}
 	}
+//---------holidays
+ 
 
 	componentDidMount() {
 		let userId = 1;
-		let weekEnding = "01/09/2021";
+		let weekEnding = "01/16/2021";
 		// let userId = localStorage.getItem("userId");
 		// let weekEnding = localStorage.getItem("weekEnding");
 		axios
 			.get("http://localhost:8082/timesheet/getTimesheet?userId=" + userId + "&weekEnding=" + weekEnding)
 			.then((response) => {
 				const timesheet = response.data;
+
+		//toby holiday logic start
+				let tempDays = timesheet.days;
+			
+
+				for  ( let i = 0 ; i < tempDays.length ; i++){
+
+					let curDate = tempDays[i]['date'];
+
+					for(let j = 0 ; j< Holidays.length; j++){
+
+						if(curDate.includes(Holidays[j])){
+							tempDays[i]['isHoliday'] = true;
+						}
+
+					}
+					
+
+				}
+
+
+				//toby holiday logic end
 				this.setState({
 					userId: timesheet.userId,
 					weekEnding: timesheet.weekEnding,
-					days: timesheet.days,
+					days: timesheet.days,   //<<<<<<<<<
 					totalBillingHours: timesheet.totalBillingHours,
 					totalCompensatedHours: timesheet.totalCompensatedHours,
 					submissionStatus: timesheet.submissionStatus,
 					approvalStatus: timesheet.approvalStatus
 				});
+
+
 			});
 
 		let newWeekEndingFormat = this.getWeekEndingFormat(new Date(weekEnding));	// YYYY-MM-DD
 		this.setState({
 			weekEndingFormat: newWeekEndingFormat
 		})
+
+
+
+		//-------------Toby's B5 initialization -------------------------
+
+		axios
+			.get("http://localhost:8082/timesheet/getpto?userId=" + userId)
+			.then((response) => {
+
+				console.log(response);
+
+				this.setState({floatingsTaken: response.data.floatings});
+				this.setState({vacationsTaken: response.data.vacations});
+			});
+
+		//-------------Toby's B5 initialization END-------------------------
 
 	}
 
@@ -128,10 +177,11 @@ class Timesheet extends Component {
 		let hours = 0;
 		for (let i = 0; i < days.length; i++) {
 			if (days[i].isFloating || days[i].isHoliday || days[i].isVacation) {
+
 				hours += days[i].isFloating * 8 + days[i].isHoliday * 8 + days[i].isVacation * 8;
 				continue;
 			}
-
+			
 			if (days[i].endTime == "N/A" || days[i].startTime == "N/A" || this.getNumberTime(days[i].endTime) - this.getNumberTime(days[i].startTime) < 0) {
 				continue;
 			}
@@ -210,9 +260,9 @@ class Timesheet extends Component {
 
 	//-------------------------------Toby's file upload start--------------
 
-	onFileChangeHandler = event => {
+onFileChangeHandler=event=>{
 
-		console.log(event.target.files[0])
+	console.log(event.target.files[0])
 
 		this.setState({
 			selectedFile: event.target.files[0],
@@ -229,46 +279,231 @@ class Timesheet extends Component {
 		data.append('userid', "0");
 		data.append('file', this.state.selectedFile);
 
-		console.log(data);
+	console.log(data);
 
-		axios.post("http://localhost:9090/file/uploadfile", data, {  	 //------------url needs to be changed later
-			// receive two    parameter endpoint url ,form data
-		})
-			.then(res => { // then print response status
+	axios.post("http://localhost:9090/file/uploadfile", data, {  	 //------------url needs to be changed later
+	  // receive two    parameter endpoint url ,form data
+	})
+	.then(res => { // then print response status
 
-				console.log(res);
-			})
+		
+		console.log(res);
+	 })
+
+}
+
+//-------------------------------Toby's  fileupload end----------------
+
+
+//-------Toby B5 Start
+
+togglePTO(currentindex , currenttype ){
+	
+	console.log('b5 toggled index is ' + currentindex +'type is ' +currenttype);
+
+	let stateCopy = this.state ; //
+
+	
+ 
+	// if(this.state.floatingsTaken.length >= 3 && currenttype == 'floating'){
+	// 	alert(" You have taken all of your 3 floating days " );
+	// }
+
+	if(currenttype == 'floating' && this.state.floatingsTaken.length < 3 && !stateCopy.days[currentindex]['isHoliday']){//
+		stateCopy.days[currentindex]['isFloating'] = !stateCopy.days[currentindex]['isFloating'];
+		stateCopy.days[currentindex]['isHoliday'] = false;
+		stateCopy.days[currentindex]['isVacation'] = false;
+
+		// floatings logic
+
+		if(stateCopy.days[currentindex]['isFloating'] == true){
+			let vactionsarr = this.state.vacationsTaken;
+			var index = vactionsarr.indexOf(stateCopy.days[currentindex]['date']);
+			 
+			if (index > -1) {
+				vactionsarr.splice(index, 1);
+			  }
+			this.setState({...this.state, vacationsTaken : vactionsarr })
+
+				let floatingsarr = this.state.floatingsTaken;
+				floatingsarr.push(stateCopy.days[currentindex]['date']);
+				this.setState({...this.state, floatingsTaken : floatingsarr })
+
+
+			// setting days
+			let tempDays = this.state.days;
+			tempDays[currentindex]['isFloating'] = true;
+
+			tempDays[currentindex]['startTime'] = 'N/A';//
+			tempDays[currentindex]['endTime'] = 'N/A';
+
+			this.setState({days: tempDays});
+
+			//
+
+		
+		}
+
+		if(stateCopy.days[currentindex]['isFloating'] == false){
+			
+			let floatingsarr = this.state.floatingsTaken;
+			var index = floatingsarr.indexOf(stateCopy.days[currentindex]['date']);
+			 
+			if (index > -1) {
+				floatingsarr.splice(index, 1);
+			  }
+			this.setState({...this.state, floatingsTaken : floatingsarr })
+
+			//setting days
+			// setting days
+			let tempDays = this.state.days;
+			tempDays[currentindex]['isFloating'] = false;
+			this.setState({days: tempDays});
+	
+		}
+		// work hours logic
+	}
+	else if(stateCopy.days[currentindex]['isFloating'] && currenttype=="floating") {
+
+		stateCopy.days[currentindex]['isFloating'] = false;
+		let floatingsarr = this.state.floatingsTaken;
+		
+		var index = floatingsarr.indexOf(stateCopy.days[currentindex]['date']);
+			 
+		if (index > -1) {
+			floatingsarr.splice(index, 1);
+		}
+
+		this.setState({...this.state, floatingsTaken : floatingsarr })
+
+ 
+			// setting days
+			let tempDays = this.state.days;
+			tempDays[currentindex]['isFloating'] = false;
+			this.setState({days: tempDays});
+
+		 
 
 	}
+	else if(this.state.floatingsTaken.length >= 3 && currenttype=="floating"){
+		alert(" You have taken all of your 3 floating days " );
+	}
 
-	//-------------------------------Toby's  fileupload end----------------
+ 
+	if(currenttype == 'holiday'){//
+		stateCopy.days[currentindex]['isFloating'] = false;
+		stateCopy.days[currentindex]['isHoliday'] = !stateCopy.days[currentindex]['isHoliday'];
+		stateCopy.days[currentindex]['isVacation'] = false;
+	}
 
-
-	//-------Toby B5 Start
-
-	togglePTO(currentindex, currenttype) {
-
-		console.log('b5 toggled index is ' + currentindex + 'type is ' + currenttype);
-
-		let stateCopy = this.state; //
-
-
-
-		if (currenttype == 'floating') {//
-
-			stateCopy.days[currentindex]['isFloating'] = !stateCopy.days[currentindex]['isFloating'];
+	// if(this.state.vacationsTaken.length >= 3 && currenttype == 'vacation'){
+	// 	alert(" You have taken all of your 3 floating days " );
+	// }
 
 
+	if(currenttype == 'vacation' && this.state.vacationsTaken.length < 3 && !stateCopy.days[currentindex]['isHoliday']){//
+
+		
+
+		stateCopy.days[currentindex]['isFloating'] = false;
+		stateCopy.days[currentindex]['isHoliday'] = false;
+		stateCopy.days[currentindex]['isVacation'] = !stateCopy.days[currentindex]['isVacation'];
+		
+		//vacations logic
+		if(stateCopy.days[currentindex]['isVacation'] == true){
+
+		let floatingsarr = this.state.floatingsTaken;
+	    var index = floatingsarr.indexOf(stateCopy.days[currentindex]['date']);
+			 
+		if (index > -1) {
+			floatingsarr.splice(index, 1);
+		}
+
+		let vactionsarr = this.state.vacationsTaken;
+		vactionsarr.push(stateCopy.days[currentindex]['date']);
+		this.setState({...this.state, vacationsTaken : vactionsarr })
+		this.setState({...this.state, floatingsTaken : floatingsarr })
+
+			// setting days
+			let tempDays = this.state.days;
+			tempDays[currentindex]['isVacation'] = true;
+			this.setState({days: tempDays});
 
 		}
 
+		if(stateCopy.days[currentindex]['isVacation'] == false){
+			
+			let vactionsarr = this.state.vacationsTaken;
+			var index = vactionsarr.indexOf(stateCopy.days[currentindex]['date']);
+			 
+			if (index > -1) {
+				vactionsarr.splice(index, 1);
+			  }
+			this.setState({...this.state, vacationsTaken : vactionsarr })
 
+				// setting days
+				let tempDays = this.state.days;
+				tempDays[currentindex]['isVacation'] = false;
+				this.setState({days: tempDays});
+	
+		}
+	}
+	else if(stateCopy.days[currentindex]['isVacation'] && currenttype=="vacation") {
 
-		this.setState(stateCopy);//
+		stateCopy.days[currentindex]['isVacation'] = false;
+		let vactionsarr = this.state.vacationsTaken;
+		
+		var index = vactionsarr.indexOf(stateCopy.days[currentindex]['date']);
+			 
+		if (index > -1) {
+			vactionsarr.splice(index, 1);
+		}
+
+		this.setState({...this.state, vacationsTaken : vactionsarr })
+
+					// setting days
+					let tempDays = this.state.days;
+					tempDays[currentindex]['isVacation'] = false;
+					this.setState({days: tempDays});
 
 	}
+	else if(this.state.vacationsTaken.length >=  3 && currenttype=="vacation"){
+		alert(" You have taken all of your 3 Vacation days " );
+	}
 
-	//-------Toby B5 End
+	this.setState(stateCopy);//
+
+}
+
+savePTO(){
+
+	  var body = { 
+		  	
+			userId: this.state.userId, 
+			floatings: this.state.floatingsTaken,
+			vacations: this.state.vacationsTaken
+	
+		}
+
+	  axios({
+		method: "post",
+		url: "http://localhost:8082/timesheet/savepto",
+		data: body ,//JSON.stringify(stateCopy),
+		headers: { "Content-Type": "application/json" },
+	  })
+		.then(function (response) {
+		
+		  
+		  console.log(response);
+		})
+		.catch(function (response) {
+		  //handle error
+		  console.log(response);
+		});
+
+}
+
+//-------Toby B5 -------------------------End
 
 	render() {
 		return (
@@ -309,7 +544,7 @@ class Timesheet extends Component {
 									<td>{item.date}</td>
 
 									<td>
-										<select value={item.startTime} onChange={(e) => this.handleStartTimeChange(index, e)}>
+										<select value={item.startTime}    disabled={item.isFloating || item.isHoliday || item.isVacation? `disabled` : ''}   onChange={(e) => this.handleStartTimeChange(index, e)}>
 											<option value="N/A">N/A</option>
 											<option value="0:00 AM">0:00 AM</option>
 											<option value="1:00 AM">1:00 AM</option>
@@ -339,7 +574,7 @@ class Timesheet extends Component {
 									</td>
 
 									<td>
-										<select value={item.endTime} onChange={(e) => this.handleEndTimeChange(index, e)}>
+										<select value={item.endTime} disabled={item.isFloating || item.isHoliday || item.isVacation? `disabled` : ''}  onChange={(e) => this.handleEndTimeChange(index, e)}>
 											<option value="N/A">N/A</option>
 											<option value="0:00 AM">0:00 AM</option>
 											<option value="1:00 AM">1:00 AM</option>
@@ -370,13 +605,18 @@ class Timesheet extends Component {
 
 									<td>{
 										item.endTime == "N/A" || item.startTime == "N/A" || this.getNumberTime(item.endTime) - this.getNumberTime(item.startTime) < 0 ?
-											0 : this.getNumberTime(item.endTime) - this.getNumberTime(item.startTime)
+										0 : this.getNumberTime(item.endTime) - this.getNumberTime(item.startTime)
 									}</td>
 									{/* //-------Toby B5 Start */}
+{/* 
+									<td>{item.isFloating ? <span onClick={ ()=> this.togglePTO(index, 'floating') } >[X]</span>  : <span onClick={()=> this.togglePTO(index, 'floating')}>[_]</span>}</td>
+									<td>{item.isHoliday ?  <span onClick={()=> this.togglePTO(index, 'holiday') }>[X]</span>  : <span onClick={()=> this.togglePTO(index, 'holiday')}>[_]</span>}</td>
+									<td>{item.isVacation ?  <span onClick={()=> this.togglePTO(index, 'vacation')}>[X]</span>  : <span onClick={()=> this.togglePTO(index, 'vacation')}>[_]</span>}</td> */}
 
-									<td>{item.isFloating ? <span onClick={() => this.togglePTO(index, 'floating')} >[X]</span> : <span onClick={() => this.togglePTO(index, 'floating')}>[_]</span>}</td>
-									<td>{item.isHoliday ? <span onClick={this.togglePTO}>[X]</span> : <span onClick={this.togglePTO}>[_]</span>}</td>
-									<td>{item.isVacation ? <span onClick={this.togglePTO}>[X]</span> : <span onClick={this.togglePTO}>[_]</span>}</td>
+
+									<td>{item.isFloating ? <span onClick={ ()=> this.togglePTO(index, 'floating') } >[X]</span>  : <span onClick={()=> this.togglePTO(index, 'floating')}>[_]</span>}</td>
+									<td>{item.isHoliday ?  '[X]'  : '[_]'}</td>
+									<td>{item.isVacation ?  <span onClick={()=> this.togglePTO(index, 'vacation')}>[X]</span>  : <span onClick={()=> this.togglePTO(index, 'vacation')}>[_]</span>}</td>
 
 									{/* //-------Toby B5 end		 */}
 								</tr>
@@ -393,11 +633,11 @@ class Timesheet extends Component {
 
 
 
-					{/* Toby's file upload start */}
-					<input type="file" name="file" onChange={this.onFileChangeHandler} /> <button type="button" class="btn btn-success btn-block" onClick={this.onFileClickHandler}>Upload</button>
-					{/* Toby's file upload end */}
+		{/* Toby's file upload start */}
+			<input type="file" name="file" onChange={this.onFileChangeHandler}/> <button type="button" class="btn btn-success btn-block" onClick={this.onFileClickHandler}>Upload</button> 
+			{/* Toby's file upload end */}
 
-
+			<button type="button" onClick={ ()=>this.savePTO() }> Save PTO</button>	
 
 					<button type="button"
 					onClick={this.handleSave}>Save</button>
