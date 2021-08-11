@@ -24,6 +24,9 @@ class Timesheet extends Component {
 		
 			 
 		}
+
+
+		 
 	}
 //---------holidays
  
@@ -215,6 +218,8 @@ class Timesheet extends Component {
 			days: newDays
 		});
 
+	//	console.log(this.state.days);
+
 		// change hours
 		let newTotalBillingHours = this.getTotalBillingHours(newDays);
 		let newTotalCompensatedHours = this.getTotalCompensatedHours(newDays);
@@ -225,38 +230,6 @@ class Timesheet extends Component {
 	};
 
 
-	handleDefault = (event) => {
-		event.preventDefault();
-
-		const newTemplate = {
-			userId: this.state.userId,
-			days: this.state.days,
-		};
-
-		axios
-			.put("http://localhost:8082/timesheet/updateDefault", newTemplate)
-			.then((res) => {});
-	}
-
-	handleSave = (event) => {
-		event.preventDefault();
-		const newTimesheet = {
-			userId: this.state.userId,
-			weekEnding: this.state.weekEnding,
-			days: this.state.days,
-			totalBillingHour: this.state.totalBillingHour,
-			totalCompensatedHour: this.state.totalCompensatedHour,
-			submissionStatus: "Incomplete",
-			approvalStatus: this.state.approvalStatus,
-			comment: this.state.comment
-		};
-
-		axios
-			.put("http://localhost:8082/timesheet/updateTimesheet", newTimesheet)
-			.then((res) => {});
-		console.log("Success updated TimeSheet");
-	}
-
 
 	//-------------------------------Toby's file upload start--------------
 
@@ -264,20 +237,20 @@ onFileChangeHandler=event=>{
 
 	console.log(event.target.files[0])
 
-		this.setState({
-			selectedFile: event.target.files[0],
-			loaded: 0,
-		})
-	}
+	this.setState({
+		selectedFile: event.target.files[0],
+		loaded: 0,
+	  })
+
+}
 
 
 
-
-	onFileClickHandler = () => {
-		const data = new FormData()
-		data.append('title', 'timesheet');
-		data.append('userid', "0");
-		data.append('file', this.state.selectedFile);
+onFileClickHandler = () => {
+	const data = new FormData() 
+	data.append('title','timesheet');
+	data.append('userid',"0");
+	data.append('file', this.state.selectedFile);
 
 	console.log(data);
 
@@ -286,7 +259,7 @@ onFileChangeHandler=event=>{
 	})
 	.then(res => { // then print response status
 
-		
+
 		console.log(res);
 	 })
 
@@ -314,9 +287,12 @@ togglePTO(currentindex , currenttype ){
 		stateCopy.days[currentindex]['isHoliday'] = false;
 		stateCopy.days[currentindex]['isVacation'] = false;
 
+
+
 		// floatings logic
 
 		if(stateCopy.days[currentindex]['isFloating'] == true){
+			
 			let vactionsarr = this.state.vacationsTaken;
 			var index = vactionsarr.indexOf(stateCopy.days[currentindex]['date']);
 			 
@@ -333,14 +309,21 @@ togglePTO(currentindex , currenttype ){
 			// setting days
 			let tempDays = this.state.days;
 			tempDays[currentindex]['isFloating'] = true;
-
 			tempDays[currentindex]['startTime'] = 'N/A';//
 			tempDays[currentindex]['endTime'] = 'N/A';
 
+		
+		
+		 
+			stateCopy.totalBillingHours = this.getTotalBillingHours(tempDays);
+			stateCopy.totalCompensatedHours = this.getTotalCompensatedHours(tempDays);
+
 			this.setState({days: tempDays});
-
-			//
-
+			//this.handleEndTimeChangeToby(currentindex,tempDays );
+		 
+			console.log(this.state.totalBillingHours)
+		//	this.handleStartTimeChangeToby(currentindex , tempDays).then(data=>{console.log(data)});
+	 		console.log(this.state.days)
 		
 		}
 
@@ -358,6 +341,8 @@ togglePTO(currentindex , currenttype ){
 			// setting days
 			let tempDays = this.state.days;
 			tempDays[currentindex]['isFloating'] = false;
+			stateCopy.totalBillingHours = this.getTotalBillingHours(tempDays);
+			stateCopy.totalCompensatedHours = this.getTotalCompensatedHours(tempDays);
 			this.setState({days: tempDays});
 	
 		}
@@ -380,6 +365,8 @@ togglePTO(currentindex , currenttype ){
 			// setting days
 			let tempDays = this.state.days;
 			tempDays[currentindex]['isFloating'] = false;
+			stateCopy.totalBillingHours = this.getTotalBillingHours(tempDays);
+			stateCopy.totalCompensatedHours = this.getTotalCompensatedHours(tempDays);
 			this.setState({days: tempDays});
 
 		 
@@ -427,6 +414,10 @@ togglePTO(currentindex , currenttype ){
 			// setting days
 			let tempDays = this.state.days;
 			tempDays[currentindex]['isVacation'] = true;
+			tempDays[currentindex]['startTime'] = 'N/A';//
+			tempDays[currentindex]['endTime'] = 'N/A';
+			stateCopy.totalBillingHours = this.getTotalBillingHours(tempDays);
+			stateCopy.totalCompensatedHours = this.getTotalCompensatedHours(tempDays);
 			this.setState({days: tempDays});
 
 		}
@@ -444,6 +435,8 @@ togglePTO(currentindex , currenttype ){
 				// setting days
 				let tempDays = this.state.days;
 				tempDays[currentindex]['isVacation'] = false;
+				stateCopy.totalBillingHours = this.getTotalBillingHours(tempDays);
+			stateCopy.totalCompensatedHours = this.getTotalCompensatedHours(tempDays);
 				this.setState({days: tempDays});
 	
 		}
@@ -464,6 +457,8 @@ togglePTO(currentindex , currenttype ){
 					// setting days
 					let tempDays = this.state.days;
 					tempDays[currentindex]['isVacation'] = false;
+					stateCopy.totalBillingHours = this.getTotalBillingHours(tempDays);
+					stateCopy.totalCompensatedHours = this.getTotalCompensatedHours(tempDays);
 					this.setState({days: tempDays});
 
 	}
@@ -474,6 +469,9 @@ togglePTO(currentindex , currenttype ){
 	this.setState(stateCopy);//
 
 }
+ 
+ 
+
 
 savePTO(){
 
@@ -516,12 +514,7 @@ savePTO(){
 					<label htmlFor="compensatedHours">Total Compensated Hours</label>
 					<textarea id="compensatedHours" value={this.state.totalCompensatedHours} rows="1" cols="10" disabled />
 				</div>
-				<button
-					type="button"
-					onClick={this.handleDefault}
-				>
-					Set Default
-				</button>
+
 				<div>
 					<table>
 						<thead>
@@ -639,8 +632,8 @@ savePTO(){
 
 			<button type="button" onClick={ ()=>this.savePTO() }> Save PTO</button>	
 
-					<button type="button"
-					onClick={this.handleSave}>Save</button>
+			
+					<button type="button">Save</button>
 				</div>
 			</>
 
