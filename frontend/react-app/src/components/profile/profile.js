@@ -136,7 +136,8 @@ class ProfileEdit extends React.Component{
                 headers: { "Content-Type": "application/json" },
               })
                 .then(function (response) {
-                  //handle success
+                
+                  
                   console.log(response);
                 })
                 .catch(function (response) {
@@ -145,7 +146,9 @@ class ProfileEdit extends React.Component{
                 });
  
     
-        event.preventDefault();          }
+        
+      
+      }
 
         
 //-------------------------------Toby's file upload start--------------

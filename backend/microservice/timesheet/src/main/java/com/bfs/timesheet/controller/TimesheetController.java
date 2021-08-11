@@ -17,14 +17,8 @@ public class TimesheetController {
     @Autowired
     TimesheetService timesheetService;
 
-    // default: userId=0
-    @PostMapping("/postInitialTemplate")
-    public void postInitialTemplate() {
-        timesheetService.postInitialTemplate();
-    }
-
     // userId=1
-    @PostMapping("/postTimesheet")
+    @PostMapping("postTimesheet")
     public void postTimesheet(@RequestParam Integer id) {
         timesheetService.postTimesheet(id);
     }
