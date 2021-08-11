@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import ProfileEdit from '../profile/Profile';
+import ProfileEdit from '../profile/profile';
 import TimeSheet from '../timesheet/Timesheet';
 import Summary from '../summary/Summary';
 

@@ -1,7 +1,9 @@
 package com.bfs.timesheet.service;
 
 import com.bfs.timesheet.domain.Day;
+import com.bfs.timesheet.domain.Template;
 import com.bfs.timesheet.domain.Timesheet;
+import com.bfs.timesheet.repository.TemplateRepository;
 import com.bfs.timesheet.repository.TimesheetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -100,5 +102,9 @@ public class TimesheetService {
     public ResponseEntity<List<Timesheet>> getAllTimesheets(String userId){
         List<Timesheet> list = timesheetRepository.findByUserId(Integer.parseInt(userId));
         return ResponseEntity.status(HttpStatus.CREATED).body(list);
+    }
+
+    public Timesheet saveTimeSheet(Timesheet timesheet){
+        return timesheetRepository.save(timesheet);
     }
 }

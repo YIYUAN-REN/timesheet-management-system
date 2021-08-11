@@ -18,12 +18,12 @@ class Summary extends Component {
             return (
                 <tr key={person.endDate}>
                     <td>{person.weekEnding}</td>
-                    <td>{person.days[0].totalHours}</td>
+                    <td>{person.totalBillingHours}</td>
                     <td>{person.submissionStatus}</td>
                     <td>{person.approvalStatus}</td>
                     <td>
                         {' '}
-                        <Link to={`/timesheet/${person.endDate}`}>
+                        <Link to={`/timesheet}`}>
                             {person.approvalStatus === 'Approved' ? 'Edit' : 'View'}
                         </Link>
                     </td>
