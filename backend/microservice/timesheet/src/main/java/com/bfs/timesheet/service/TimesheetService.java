@@ -1,7 +1,9 @@
 package com.bfs.timesheet.service;
 
 import com.bfs.timesheet.domain.Day;
+import com.bfs.timesheet.domain.Template;
 import com.bfs.timesheet.domain.Timesheet;
+import com.bfs.timesheet.repository.TemplateRepository;
 import com.bfs.timesheet.repository.TimesheetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,53 @@ import java.util.List;
 public class TimesheetService {
     @Autowired
     private TimesheetRepository timesheetRepository;
+
+    @Autowired
+    private TemplateRepository templateRepository;
+
+    public void postInitialTemplate() {
+        Template template = new Template();
+
+        List<Day> days = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            Day day = new Day();
+            if (i == 0) {
+                day.setDay("Sunday");
+                day.setStartTime("N/A");
+                day.setEndTime("N/A");
+            } else if (i == 1) {
+                day.setDay("Monday");
+                day.setStartTime("9:00 AM");
+                day.setEndTime("6:00 PM");
+            } else if (i == 2) {
+                day.setDay("Tuesday");
+                day.setStartTime("9:00 AM");
+                day.setEndTime("6:00 PM");
+            }  else if (i == 3) {
+                day.setDay("Wednesday");
+                day.setStartTime("9:00 AM");
+                day.setEndTime("6:00 PM");
+            }  else if (i == 4) {
+                day.setDay("Thursday");
+                day.setStartTime("9:00 AM");
+                day.setEndTime("6:00 PM");
+            }  else if (i == 5) {
+                day.setDay("Friday");
+                day.setStartTime("9:00 AM");
+                day.setEndTime("6:00 PM");
+            } else {
+                day.setDay("Saturday");
+                day.setStartTime("N/A");
+                day.setEndTime("N/A");
+            }
+            days.add(day);
+        }
+
+        template.setId(1);
+        template.setUserId(0);
+        template.setDays(days);
+        templateRepository.save(template);
+    }
 
     public void postTimesheet(Integer id) {
         Timesheet timesheet = new Timesheet();
@@ -34,7 +83,7 @@ public class TimesheetService {
                 day.setDate("01/04/2021");
                 day.setStartTime("9:00 AM");
                 day.setEndTime("6:00 PM");
-                day.setIsFloating(false);
+                day.setIsFloating(true);
                 day.setIsHoliday(false);
                 day.setIsVacation(false);
             } else if (i == 2) {
