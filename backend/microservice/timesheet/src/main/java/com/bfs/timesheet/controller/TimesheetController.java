@@ -40,9 +40,9 @@ public class TimesheetController {
 
     @PutMapping("/updateDefault")
     public ResponseEntity<String> updateTemplate(@RequestBody Template template){
-        Template originalTemp = templateService.getTemplate(template.getUserId());
-        originalTemp.setDays(template.getDays());
-        templateService.saveTemplate(originalTemp);
+//        Template originalTemp = templateService.getTemplate(template.getUserId());
+//        originalTemp.setDays(template.getDays());
+        templateService.saveTemplate(template.getUserId(), template.getDays());
         return ResponseEntity.ok("Update Default Template");
     }
 

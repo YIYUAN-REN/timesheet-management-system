@@ -252,6 +252,69 @@ class Timesheet extends Component {
 		});
 	};
 
+	handleDefault = (event) => {
+		event.preventDefault();
+
+		const newTemplate = {
+			userId: this.state.userId,
+			days: this.state.days,
+		};
+
+		axios
+			.put("http://localhost:8082/timesheet/updateDefault", newTemplate)
+			.then((res) => {});
+	}
+
+	handleSave = (event) => {
+		event.preventDefault();
+		const newTimesheet = {
+			userId: this.state.userId,
+			weekEnding: this.state.weekEnding,
+			days: this.state.days,
+			totalBillingHour: this.state.totalBillingHour,
+			totalCompensatedHour: this.state.totalCompensatedHour,
+			submissionStatus: "Incomplete",
+			approvalStatus: this.state.approvalStatus,
+			comment: this.state.comment
+		};
+		// const newPTO = {
+		// 	userId: this.state.userId,
+		// 	floatings: this.state.floatingsTaken,
+		// 	vacations: this.state.vacationsTaken
+		// }
+		const body = {
+
+			userId: this.state.userId,
+			floatings: this.state.floatingsTaken,
+			vacations: this.state.vacationsTaken
+
+		}
+
+	  axios({
+		method: "post",
+		url: "http://localhost:8082/timesheet/savepto",
+		data: body ,//JSON.stringify(stateCopy),
+		headers: { "Content-Type": "application/json" },
+	  })
+		.then(function (response) {
+
+		  console.log(response);
+		})
+		.catch(function (response) {
+		  //handle error
+		  console.log(response);
+		});
+
+		axios
+			.put("http://localhost:8082/timesheet/updateTimesheet", newTimesheet)
+			.then((res) => {});
+		// axios
+		// 	.post("http://localhost:8082/timesheet/savepto", newPTO)
+		// 	.then((res) => {});
+
+		console.log("Success updated TimeSheet");
+
+	}
 
 
 	//-------------------------------Toby's file upload start--------------
@@ -495,34 +558,34 @@ class Timesheet extends Component {
 
 
 
+// savePTO(){
+//
+// 	  var body = {
+//
+// 			userId: this.state.userId,
+// 			floatings: this.state.floatingsTaken,
+// 			vacations: this.state.vacationsTaken
+//
+// 		}
+//
+// 	  axios({
+// 		method: "post",
+// 		url: "http://localhost:8082/timesheet/savepto",
+// 		data: body ,//JSON.stringify(stateCopy),
+// 		headers: { "Content-Type": "application/json" },
+// 	  })
+// 		.then(function (response) {
+//
+//
+// 		  console.log(response);
+// 		})
+// 		.catch(function (response) {
+// 		  //handle error
+// 		  console.log(response);
+// 		});
+//
+// }
 
-	savePTO() {
-
-		var body = {
-
-			userId: this.state.userId,
-			floatings: this.state.floatingsTaken,
-			vacations: this.state.vacationsTaken
-
-		}
-
-		axios({
-			method: "post",
-			url: "http://localhost:8082/timesheet/savepto",
-			data: body,//JSON.stringify(stateCopy),
-			headers: { "Content-Type": "application/json" },
-		})
-			.then(function (response) {
-
-
-				console.log(response);
-			})
-			.catch(function (response) {
-				//handle error
-				console.log(response);
-			});
-
-	}
 
 	//-------Toby B5 -------------------------End
 
@@ -709,6 +772,7 @@ class Timesheet extends Component {
 
 					<button type="button" onClick={() => this.savePTO()}> Save PTO</button>
 
+			{/*<button type="button" onClick={ ()=>this.savePTO() }> Save PTO</button>	*/}
 
 					<button type="button">Save</button>
 				</div>

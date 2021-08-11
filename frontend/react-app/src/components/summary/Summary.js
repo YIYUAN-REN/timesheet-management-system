@@ -14,20 +14,41 @@ class Summary extends Component {
 
     renderTableData(){
         return this.state.timeList.
-            slice(0, this.state.count).map((person, ) => {
+            slice(0, this.state.count).map((summary, ) => {
+            const {
+                id,
+                weekEnding,
+                totalBillingHours,
+                submissionStatus,
+                approvalStatus,
+                comment,
+            } = summary;
+            let option = "";
+            let timesheetUrl = "http://localhost:8082/timesheet/getTimesheet?userId=" + this.userId + "&weekEnding=" + weekEnding;
+            if(approvalStatus === "Approved"){
+                option = (
+                    <a href="/view" onClick={this.handleOption(summary)}>
+                        {" "}
+                        View
+                    </a>
+                );
+            }
+            else {
+                option = (
+                    <a href= "/timesheet" onClick={this.handleOption(summary)}>
+                        {" "}
+                        Edit
+                    </a>
+                );
+            }
             return (
-                <tr key={person.endDate}>
-                    <td>{person.weekEnding}</td>
-                    <td>{person.totalBillingHours}</td>
-                    <td>{person.submissionStatus}</td>
-                    <td>{person.approvalStatus}</td>
-                    <td>
-                        {' '}
-                        <Link to={`/timesheet}`}>
-                            {person.approvalStatus === 'Approved' ? 'Edit' : 'View'}
-                        </Link>
-                    </td>
-                    <td>{person.comment}</td>
+                <tr key={id}>
+                    <td>{weekEnding}</td>
+                    <td>{totalBillingHours}</td>
+                    <td>{submissionStatus}</td>
+                    <td>{approvalStatus}</td>
+                    <td>{option}</td>
+                    <td>{comment}</td>
                 </tr>
             );
         })
@@ -35,12 +56,21 @@ class Summary extends Component {
     }
 
     componentDidMount() {
+        let userId = localStorage.getItem("userID");
+        this.userId = 1;
         axios.get(`http://localhost:8082/timesheet/getAllTimesheets/`+this.userId)
             .then(res => {
                 console.log(res.data)
                 this.setState({timeList: res.data})
             })
     }
+
+    handleOption = (summary) => (event) => {
+        console.log(summary.weekEnding);
+        localStorage.setItem("userId", 1);
+        localStorage.setItem("weekEnding", summary.weekEnding);
+        // axios
+    };
 
     handleShowMore = () => {
         if (this.state.count === 5) {
