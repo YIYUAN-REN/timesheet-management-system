@@ -81,12 +81,11 @@ public class TimesheetService {
             days.add(day);
         }
 
-        timesheet.setId(id);
         timesheet.setUserId(1);
         timesheet.setWeekEnding("01/09/2021");
         timesheet.setDays(days);
-        timesheet.setTotalBillingHours(8);
-        timesheet.setTotalCompensatedHours(0);
+        timesheet.setTotalBillingHours(45);
+        timesheet.setTotalCompensatedHours(45);
         timesheet.setSubmissionStatus("Not Started");
         timesheet.setApprovalStatus("N/A");
         timesheet.setComment("");
