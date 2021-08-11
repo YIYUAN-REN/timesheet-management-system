@@ -106,8 +106,8 @@ class Timesheet extends Component {
 		let firstDay = new Date();
 		firstDay.setMonth(0);// JAN
 		firstDay.setDate(3);// 3
-		let diffDays = Math.ceil((nowDate - firstDay)/(24*60*60*1000));
-		let week = Math.ceil(diffDays/7);
+		let diffDays = Math.ceil((nowDate - firstDay) / (24 * 60 * 60 * 1000));
+		let week = Math.ceil(diffDays / 7);
 		let weekNumber = week === 0 ? 1 : week;
 
 		// update weekEndingChecks
@@ -262,7 +262,7 @@ class Timesheet extends Component {
 
 		axios
 			.put("http://localhost:8082/timesheet/updateDefault", newTemplate)
-			.then((res) => {});
+			.then((res) => { });
 	}
 
 	handleSave = (event) => {
@@ -271,8 +271,8 @@ class Timesheet extends Component {
 			userId: this.state.userId,
 			weekEnding: this.state.weekEnding,
 			days: this.state.days,
-			totalBillingHour: this.state.totalBillingHour,
-			totalCompensatedHour: this.state.totalCompensatedHour,
+			totalBillingHours: this.state.totalBillingHours,
+			totalCompensatedHours: this.state.totalCompensatedHours,
 			submissionStatus: "Incomplete",
 			approvalStatus: this.state.approvalStatus,
 			comment: this.state.comment
@@ -290,29 +290,29 @@ class Timesheet extends Component {
 
 		}
 
-	  axios({
-		method: "post",
-		url: "http://localhost:8082/timesheet/savepto",
-		data: body ,//JSON.stringify(stateCopy),
-		headers: { "Content-Type": "application/json" },
-	  })
-		.then(function (response) {
-
-		  console.log(response);
+		axios({
+			method: "post",
+			url: "http://localhost:8082/timesheet/savepto",
+			data: body,//JSON.stringify(stateCopy),
+			headers: { "Content-Type": "application/json" },
 		})
-		.catch(function (response) {
-		  //handle error
-		  console.log(response);
-		});
+			.then(function (response) {
+
+				console.log(response);
+			})
+			.catch(function (response) {
+				//handle error
+				console.log(response);
+			});
 
 		axios
 			.put("http://localhost:8082/timesheet/updateTimesheet", newTimesheet)
-			.then((res) => {});
+			.then((res) => { console.log("Success updated TimeSheet"); });
 		// axios
 		// 	.post("http://localhost:8082/timesheet/savepto", newPTO)
 		// 	.then((res) => {});
 
-		console.log("Success updated TimeSheet");
+
 
 	}
 
@@ -558,33 +558,33 @@ class Timesheet extends Component {
 
 
 
-// savePTO(){
-//
-// 	  var body = {
-//
-// 			userId: this.state.userId,
-// 			floatings: this.state.floatingsTaken,
-// 			vacations: this.state.vacationsTaken
-//
-// 		}
-//
-// 	  axios({
-// 		method: "post",
-// 		url: "http://localhost:8082/timesheet/savepto",
-// 		data: body ,//JSON.stringify(stateCopy),
-// 		headers: { "Content-Type": "application/json" },
-// 	  })
-// 		.then(function (response) {
-//
-//
-// 		  console.log(response);
-// 		})
-// 		.catch(function (response) {
-// 		  //handle error
-// 		  console.log(response);
-// 		});
-//
-// }
+	// savePTO(){
+	//
+	// 	  var body = {
+	//
+	// 			userId: this.state.userId,
+	// 			floatings: this.state.floatingsTaken,
+	// 			vacations: this.state.vacationsTaken
+	//
+	// 		}
+	//
+	// 	  axios({
+	// 		method: "post",
+	// 		url: "http://localhost:8082/timesheet/savepto",
+	// 		data: body ,//JSON.stringify(stateCopy),
+	// 		headers: { "Content-Type": "application/json" },
+	// 	  })
+	// 		.then(function (response) {
+	//
+	//
+	// 		  console.log(response);
+	// 		})
+	// 		.catch(function (response) {
+	// 		  //handle error
+	// 		  console.log(response);
+	// 		});
+	//
+	// }
 
 
 	//-------Toby B5 -------------------------End
@@ -770,11 +770,10 @@ class Timesheet extends Component {
 					<input type="file" name="file" onChange={this.onFileChangeHandler} /> <button type="button" class="btn btn-success btn-block" onClick={this.onFileClickHandler}>Upload</button>
 					{/* Toby's file upload end */}
 
-					<button type="button" onClick={() => this.savePTO()}> Save PTO</button>
 
-			{/*<button type="button" onClick={ ()=>this.savePTO() }> Save PTO</button>	*/}
+					{/*<button type="button" onClick={ ()=>this.savePTO() }> Save PTO</button>	*/}
 
-					<button type="button">Save</button>
+					<button type="button" onClick={this.handleSave}>Save</button>
 				</div>
 			</>
 
