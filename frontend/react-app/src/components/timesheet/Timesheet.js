@@ -653,6 +653,12 @@ class Timesheet extends Component {
 					<textarea id="billingHours" value={this.state.totalBillingHours} rows="1" cols="10" disabled />
 					<label htmlFor="compensatedHours">Total Compensated Hours</label>
 					<textarea id="compensatedHours" value={this.state.totalCompensatedHours} rows="1" cols="10" disabled />
+					<button
+						type="button"
+						onClick={this.handleDefault}
+					>
+						Set Default
+					</button>
 				</div>
 
 				<div>
