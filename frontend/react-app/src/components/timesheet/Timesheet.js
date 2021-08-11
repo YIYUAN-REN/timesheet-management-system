@@ -175,6 +175,37 @@ class Timesheet extends Component {
 	};
 
 
+	handleDefault = (event) => {
+		event.preventDefault();
+
+		const newTemplate = {
+			userId: this.state.userId,
+			days: this.state.days,
+		};
+
+		axios
+			.put("http://localhost:8082/timesheet/updateDefault", newTemplate)
+			.then((res) => {});
+	}
+
+	handleSave = (event) => {
+		event.preventDefault();
+		const newTimesheet = {
+			userId: this.state.userId,
+			weekEnding: this.state.weekEnding,
+			days: this.state.days,
+			totalBillingHour: this.state.totalBillingHour,
+			totalCompensatedHour: this.state.totalCompensatedHour,
+			submissionStatus: "Incomplete",
+			approvalStatus: this.state.approvalStatus,
+			comment: this.state.comment
+		};
+
+		axios
+			.put("http://localhost:8082/timesheet/updateTimesheet", newTimesheet)
+			.then((res) => {});
+		console.log("Success updated TimeSheet");
+	}
 
 
 	//-------------------------------Toby's file upload start--------------
@@ -187,8 +218,8 @@ class Timesheet extends Component {
 			selectedFile: event.target.files[0],
 			loaded: 0,
 		})
-
 	}
+
 
 
 
@@ -250,7 +281,12 @@ class Timesheet extends Component {
 					<label htmlFor="compensatedHours">Total Compensated Hours</label>
 					<textarea id="compensatedHours" value={this.state.totalCompensatedHours} rows="1" cols="10" disabled />
 				</div>
-
+				<button
+					type="button"
+					onClick={this.handleDefault}
+				>
+					Set Default
+				</button>
 				<div>
 					<table>
 						<thead>
@@ -363,7 +399,8 @@ class Timesheet extends Component {
 
 
 
-					<button type="button">Save</button>
+					<button type="button"
+					onClick={this.handleSave}>Save</button>
 				</div>
 			</>
 

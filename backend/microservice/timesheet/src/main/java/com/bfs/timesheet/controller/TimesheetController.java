@@ -1,6 +1,8 @@
 package com.bfs.timesheet.controller;
 
+import com.bfs.timesheet.domain.Template;
 import com.bfs.timesheet.domain.Timesheet;
+import com.bfs.timesheet.service.TemplateService;
 import com.bfs.timesheet.service.TimesheetService;
 import org.bouncycastle.util.Times;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +19,8 @@ public class TimesheetController {
     @Autowired
     TimesheetService timesheetService;
 
-    // default: userId=0
-    @PostMapping("/postInitialTemplate")
-    public void postInitialTemplate() {
-        timesheetService.postInitialTemplate();
-    }
+    @Autowired
+    TemplateService templateService;
 
     // userId=1
     @PostMapping("/postTimesheet")
@@ -38,4 +37,26 @@ public class TimesheetController {
     public ResponseEntity<List<Timesheet>> getAllTimesheets(@PathVariable String userId) {
         return timesheetService.getAllTimesheets(userId);
     }
+
+    @PutMapping("/updateDefault")
+    public ResponseEntity<String> updateTemplate(@RequestBody Template template){
+        Template originalTemp = templateService.getTemplate(template.getUserId());
+        originalTemp.setDays(template.getDays());
+        templateService.saveTemplate(originalTemp);
+        return ResponseEntity.ok("Update Default Template");
+    }
+
+    @PutMapping("/updateTimesheet")
+    public ResponseEntity<String> updateTimesheet(@RequestBody Timesheet timesheet) {
+        Timesheet originalTime = timesheetService.getTimesheet(timesheet.getUserId(),timesheet.getWeekEnding());
+        originalTime.setTotalBillingHours(timesheet.getTotalBillingHours());
+        originalTime.setTotalCompensatedHours(timesheet.getTotalCompensatedHours());
+        originalTime.setSubmissionStatus(timesheet.getSubmissionStatus());
+        originalTime.setApprovalStatus(timesheet.getApprovalStatus());
+        originalTime.setComment(timesheet.getComment());
+        originalTime.setDays(timesheet.getDays());
+        timesheetService.saveTimeSheet(originalTime);
+        return ResponseEntity.ok("Update timesheet");
+    }
+
 }

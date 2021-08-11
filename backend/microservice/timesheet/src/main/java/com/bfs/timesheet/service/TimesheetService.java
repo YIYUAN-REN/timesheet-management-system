@@ -150,4 +150,8 @@ public class TimesheetService {
         List<Timesheet> list = timesheetRepository.findByUserId(Integer.parseInt(userId));
         return ResponseEntity.status(HttpStatus.CREATED).body(list);
     }
+
+    public Timesheet saveTimeSheet(Timesheet timesheet){
+        return timesheetRepository.save(timesheet);
+    }
 }
