@@ -30,7 +30,7 @@ class Timesheet extends Component {
 
 	componentDidMount() {
 		let userId = 1;
-		let weekEnding = "01/16/2021";
+		let weekEnding = "01/09/2021";
 		// let userId = localStorage.getItem("userId");
 		// let weekEnding = localStorage.getItem("weekEnding");
 		axios
@@ -250,11 +250,43 @@ class Timesheet extends Component {
 			approvalStatus: this.state.approvalStatus,
 			comment: this.state.comment
 		};
+		// const newPTO = {
+		// 	userId: this.state.userId,
+		// 	floatings: this.state.floatingsTaken,
+		// 	vacations: this.state.vacationsTaken
+		// }
+		const body = {
+
+			userId: this.state.userId,
+			floatings: this.state.floatingsTaken,
+			vacations: this.state.vacationsTaken
+
+		}
+
+	  axios({
+		method: "post",
+		url: "http://localhost:8082/timesheet/savepto",
+		data: body ,//JSON.stringify(stateCopy),
+		headers: { "Content-Type": "application/json" },
+	  })
+		.then(function (response) {
+
+		  console.log(response);
+		})
+		.catch(function (response) {
+		  //handle error
+		  console.log(response);
+		});
 
 		axios
 			.put("http://localhost:8082/timesheet/updateTimesheet", newTimesheet)
 			.then((res) => {});
+		// axios
+		// 	.post("http://localhost:8082/timesheet/savepto", newPTO)
+		// 	.then((res) => {});
+
 		console.log("Success updated TimeSheet");
+
 	}
 
 
@@ -475,33 +507,33 @@ togglePTO(currentindex , currenttype ){
 
 }
 
-savePTO(){
-
-	  var body = { 
-		  	
-			userId: this.state.userId, 
-			floatings: this.state.floatingsTaken,
-			vacations: this.state.vacationsTaken
-	
-		}
-
-	  axios({
-		method: "post",
-		url: "http://localhost:8082/timesheet/savepto",
-		data: body ,//JSON.stringify(stateCopy),
-		headers: { "Content-Type": "application/json" },
-	  })
-		.then(function (response) {
-		
-		  
-		  console.log(response);
-		})
-		.catch(function (response) {
-		  //handle error
-		  console.log(response);
-		});
-
-}
+// savePTO(){
+//
+// 	  var body = {
+//
+// 			userId: this.state.userId,
+// 			floatings: this.state.floatingsTaken,
+// 			vacations: this.state.vacationsTaken
+//
+// 		}
+//
+// 	  axios({
+// 		method: "post",
+// 		url: "http://localhost:8082/timesheet/savepto",
+// 		data: body ,//JSON.stringify(stateCopy),
+// 		headers: { "Content-Type": "application/json" },
+// 	  })
+// 		.then(function (response) {
+//
+//
+// 		  console.log(response);
+// 		})
+// 		.catch(function (response) {
+// 		  //handle error
+// 		  console.log(response);
+// 		});
+//
+// }
 
 //-------Toby B5 -------------------------End
 
@@ -637,7 +669,7 @@ savePTO(){
 			<input type="file" name="file" onChange={this.onFileChangeHandler}/> <button type="button" class="btn btn-success btn-block" onClick={this.onFileClickHandler}>Upload</button> 
 			{/* Toby's file upload end */}
 
-			<button type="button" onClick={ ()=>this.savePTO() }> Save PTO</button>	
+			{/*<button type="button" onClick={ ()=>this.savePTO() }> Save PTO</button>	*/}
 
 					<button type="button"
 					onClick={this.handleSave}>Save</button>
