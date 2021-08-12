@@ -46,7 +46,7 @@ class Summary extends Component {
 				console.log('comment is :' + comment)
 				let option = "";
 				// let timesheetUrl = "http://localhost:8082/timesheet/getTimesheet?userId=" + this.userId + "&weekEnding=" + weekEnding;
-				if (approvalStatus === "Approved") {
+				if (approvalStatus === "Approve") {
 					option = (
 						<a href="/viewTimesheet" onClick={this.handleOption(summary)}>
 							View
@@ -75,14 +75,38 @@ class Summary extends Component {
 										</Tooltip>
 									}
 								>
-									<button
-										type="button"
-										hidden={approvalStatus != "Approved" && submissionStatus != "Not Started"}
-									>
-										i
-									</button>
+									<img src="https://img.icons8.com/color/25/000000/info--v1.png"
+										// hidden={approvalStatus != "Approve" && (submissionStatus != "Not Started" | "Complete")}
+										hidden={!(approvalStatus == "N/A" && (submissionStatus == "Incomplete" | "Complete"))}
+									/>
 								</OverlayTrigger>
 							))}
+
+							{['right'].map((placement) => (
+								<OverlayTrigger
+									key={placement}
+									placement={placement}
+									overlay={
+										<Tooltip id={`tooltip-${placement}`}>
+											Approval denied by Admin, please contact your
+											HR manager
+										</Tooltip>
+									}
+								>
+									<img src="https://img.icons8.com/color/25/000000/info--v1.png"
+										hidden={approvalStatus != "Deny" && submissionStatus != "Incomplete" || approvalStatus == ("N/A" || "Approve")}
+									/>
+
+									{/*<button*/}
+									{/*    type="button"*/}
+									{/*    hidden = {approvalStatus != "Approved" && submissionStatus != "Not Started"}*/}
+									{/*>*/}
+									{/*    i*/}
+									{/*</button>*/}
+
+								</OverlayTrigger>
+							))}
+
 						</td>
 						<td>{approvalStatus}</td>
 						<td>{option}</td>
@@ -140,7 +164,7 @@ class Summary extends Component {
 		console.log(this.props.location);
 
 		let userId = localStorage.getItem("userID");
-		this.userId = 1;
+		// this.userId = 1;
 		axios.get(`http://localhost:8082/timesheet/getAllTimesheets/` + this.userId)
 			.then(res => {
 				console.log(res.data)
@@ -167,7 +191,7 @@ class Summary extends Component {
 
 	handleOption = (summary) => (event) => {
 		console.log(summary.weekEnding);
-		localStorage.setItem("userId", 1);
+		localStorage.setItem("userId", localStorage.getItem("userId"));
 		localStorage.setItem("weekEnding", summary.weekEnding);
 		// axios
 		// axios

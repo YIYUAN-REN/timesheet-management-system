@@ -10,7 +10,7 @@ class ProfileEdit extends React.Component {
     super(props);
 
     this.state = {
-      userId: 1,
+      userId: localStorage.getItem("userId"),
       phoneNumber: '',
       email: '',
       fullAddress: '',
@@ -50,7 +50,7 @@ class ProfileEdit extends React.Component {
   fetchProfile() {
 
     const res = axios(
-      'http://localhost:9090/profile/getcontact/1').then(response => {
+      'http://localhost:9090/profile/getcontact/' + this.state.userId).then(response => {
 
         console.log(response.data.phoneNumber);
 
