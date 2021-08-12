@@ -124,12 +124,11 @@ class Summary extends Component {
 										</Tooltip>
 									}
 								>
-									<button
-										type="button"
+									<img src="https://img.icons8.com/color/25/000000/info--v1.png"
+										// hidden={approvalStatus != "Approve" && (submissionStatus != "Not Started" | "Complete")}
 										hidden={comment == ""}
-									>
-										i
-									</button>
+									/>
+
 								</OverlayTrigger>
 							))}
 						</td>
@@ -163,9 +162,9 @@ class Summary extends Component {
 
 		console.log(this.props.location);
 
-		let userId = localStorage.getItem("userID");
+		let userId = localStorage.getItem("userId");
 		// this.userId = 1;
-		axios.get(`http://localhost:8082/timesheet/getAllTimesheets/` + this.userId)
+		axios.get(`http://localhost:8082/timesheet/getAllTimesheets/` + userId)
 			.then(res => {
 				console.log(res.data)
 				this.setState({ timeList: res.data })
