@@ -24,13 +24,8 @@ public class TimesheetController {
 
     // userId=1
     @PostMapping("postTimesheet")
-    public void postTimesheet() {
-        timesheetService.postTimesheet();
-    }
-
-    @PostMapping("postScheduleTimesheet")
-    public void postScheduleTimesheet() {
-        timesheetService.postScheduleTimesheet();
+    public void postTimesheet(@RequestParam Integer id) {
+        timesheetService.postTimesheet(id);
     }
 
     @GetMapping("/getTimesheet")
