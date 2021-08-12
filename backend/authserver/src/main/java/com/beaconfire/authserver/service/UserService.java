@@ -18,9 +18,9 @@ public class UserService {
 
     public void postUser() {
         User user = new User();
-        user.setId(1);
-        user.setUsername("user1");
-        user.setPassword("password1");
+        user.setId(2);
+        user.setUsername("user2");
+        user.setPassword("password2");
         userRepository.save(user);
     }
 

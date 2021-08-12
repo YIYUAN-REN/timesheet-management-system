@@ -121,6 +121,7 @@ public class TimesheetService {
             timesheet.setSubmissionStatus("Not Started");
             timesheet.setApprovalStatus("N/A");
             timesheet.setComment("");
+            System.out.println(timesheet);
             timesheetRepository.save(timesheet);
         }
     }
