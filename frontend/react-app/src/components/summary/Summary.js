@@ -25,6 +25,25 @@ class Summary extends Component {
                 comment,
 
             } = summary;
+
+            //toby
+                let newComment2 = comment.split('/');
+                let warnningComment = '';
+
+                if(comment.split('/').length >1){
+                    newComment2 = comment.split('/' )[0] ;
+                    warnningComment =  comment.split('/' )[1] ;
+                }
+
+                  if(comment.split('/').length >3){
+                     newComment2 = comment.split('/',4)[0] + '/'+ comment.split('/',4)[2];
+                     warnningComment =  comment.split('/' )[1] + '/' + comment.split('/' )[3];
+                 }
+
+                console.log("new comment length is" + newComment2.length);
+            // toby
+
+            console.log('comment is :' +comment)
             let option = "";
             // let timesheetUrl = "http://localhost:8082/timesheet/getTimesheet?userId=" + this.userId + "&weekEnding=" + weekEnding;
             if(approvalStatus === "Approved"){
@@ -67,7 +86,31 @@ class Summary extends Component {
                     </td>
                     <td>{approvalStatus}</td>
                     <td>{option}</td>
-                    <td>{comment}</td>
+                {/* // toby comment */}
+
+                    <td>{newComment2} 
+                    
+                    {['right'].map((placement) => (
+                            <OverlayTrigger
+                                key={placement}
+                                placement={placement}
+                                overlay={
+                                    <Tooltip id={`tooltip-${placement}`}>
+                                        {warnningComment}
+                                    </Tooltip>
+                                }
+                            >
+                                <button
+                                    type="button"
+                                    hidden = {comment == "" }
+                                >
+                                    i
+                                </button>
+                            </OverlayTrigger>
+                        ))}
+                    </td>
+                  {/* // toby comment */}
+
                 </tr>
             );
         })
@@ -84,8 +127,8 @@ class Summary extends Component {
             const weekEnding = array[2].substr(11);
             localStorage.setItem("userId", userId);
             localStorage.setItem("token", token);
-            // localStorage.setItem("weekEnding", weekEnding);
-            localStorage.setItem("weekEnding", this.getSaturday());
+            localStorage.setItem("weekEnding", weekEnding);
+            localStorage.setItem("weekEnding", "01/09/2021");
             window.location.href = "http://localhost:3000/summary";
         }
         // redirected to 3001
@@ -103,23 +146,6 @@ class Summary extends Component {
                 this.setState({ timeList: res.data })
             })
     }
-
-    getSaturday() {
-        var now = new Date();
-        var nowTime = now.getTime() ;
-        var day = now.getDay();
-        var oneDayTime = 24*60*60*1000 ;
-        var SaturdayTime = nowTime - (day-6)*oneDayTime;
-        return this.getWeekEnding(new Date(SaturdayTime));
-    }
-
-	// MM/DD/YYYY
-	getWeekEnding(date) {
-		let month = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
-		let day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
-		let year = date.getFullYear();
-		return month + "/" + day + "/" + year;
-	}
 
     handleOption = (summary) => (event) => {
         console.log(summary.weekEnding);
@@ -148,10 +174,9 @@ class Summary extends Component {
 
     render() {
         const count = this.count;
-        localStorage.setItem("weekEnding", this.getSaturday());
 
         return (
-            <div>
+            <div class="page-section portfolio" >
                 <Table striped bordered hover>
                     <thead>
                         <tr>

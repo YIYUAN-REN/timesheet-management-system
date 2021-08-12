@@ -5,6 +5,8 @@ import TimeSheet from '../timesheet/Timesheet';
 import Summary from '../summary/Summary';
 import viewTimeSheet from '../timesheet/viewTimeSheet';
 import Logout from '../logout/Logout';
+import "../../css/styles.css"
+ 
 
 export default class Navigation extends Component {
     state = {
@@ -14,7 +16,8 @@ export default class Navigation extends Component {
         const show = this.state.show;
         return (
             <Router>
-                <div className="container">
+                  <nav class="navbar navbar-expand-lg bg-secondary text-uppercase fixed-top" id="mainNav">
+                <div className="container-fluid">
                     <ul className="nav nav-tabs" id="myTab" role="tablist">
                         {/* <li className="nav-item" role="presentation">
                             <Link to={'/'} className="nav-link"> Summary </Link>
@@ -32,6 +35,8 @@ export default class Navigation extends Component {
                           <Link to={'/logout'} className="nav-link">Logout</Link>
                         </li>
                     </ul>
+                    </div>
+                    </nav>
                     <Switch>
                         <Route exact path='/' component={Summary} />
                         <Route path='/summary' component={Summary} />
@@ -40,8 +45,12 @@ export default class Navigation extends Component {
                         <Route path='/logout' component={Logout} />
                         <Route path='/viewTimesheet' component={viewTimeSheet} />
                     </Switch>
-                </div>
+               
+
+
+
             </Router>
+
         )
     }
 }

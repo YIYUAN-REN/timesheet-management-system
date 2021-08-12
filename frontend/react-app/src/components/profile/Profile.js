@@ -10,7 +10,7 @@ class ProfileEdit extends React.Component {
     super(props);
 
     this.state = {
-      userid: 1,
+      userId: 1,
       phoneNumber: '',
       email: '',
       fullAddress: '',
@@ -133,7 +133,7 @@ class ProfileEdit extends React.Component {
     var jsonToSend = JSON.stringify(object);
 
     axios({
-      method: "post",
+      method: "put",
       url: "http://localhost:9090/profile/editcontact",
       data: JSON.stringify(stateCopy),
       headers: { "Content-Type": "application/json" },
@@ -147,6 +147,24 @@ class ProfileEdit extends React.Component {
         //handle error
         console.log(response);
       });
+
+
+      const data = new FormData()
+    data.append('title', 'avatar');
+    data.append('userId', this.state.userId);
+    data.append('file', this.state.selectedFile);
+
+    console.log(data);
+
+    axios.post("http://localhost:9090/file/uploadfile", data, {   //------------url needs to be changed later
+      // receive two    parameter endpoint url ,form data
+    })
+      .then(res => { // then print response status
+        console.log(res);
+        this.refreshPage();
+        window.location.reload();
+      })
+
 
 
 
@@ -176,7 +194,7 @@ class ProfileEdit extends React.Component {
   onFileClickHandler = () => {
     const data = new FormData()
     data.append('title', 'avatar');
-    data.append('userid', this.state.userid);
+    data.append('userId', this.state.userId);
     data.append('file', this.state.selectedFile);
 
     console.log(data);
@@ -202,7 +220,7 @@ class ProfileEdit extends React.Component {
 
   render() {
     return (
-      <div container="container">
+      <div container="container" class="page-section portfolio">
         <div class="row">
           <div class="col-3">
             <h4>Your Profile</h4>
@@ -211,28 +229,29 @@ class ProfileEdit extends React.Component {
 
 
             {/* Toby's file upload start */}
-            <input type="file" name="file" onChange={this.onFileChangeHandler} /> <button type="button" class="btn btn-success btn-block" onClick={this.onFileClickHandler}>Upload</button>
+            <input type="file" name="file" onChange={this.onFileChangeHandler} /> 
+            {/* <button type="button" class="btn btn-success btn-block" onClick={this.onFileClickHandler}>Upload</button> */}
             {/* Toby's file upload end */}
           </div>
-          <div class="col-6">
+          <div class="col-4">
             <form onSubmit={this.handleSubmit}>
 
 
-              <div><input type="text" value={this.state.phoneNumber} onChange={(e) => this.changePhone(e)} /></div>
-              <div><input type="text" value={this.state.email} onChange={(e) => this.changeEmail(e)} /></div>
-              <div><textarea type="text" value={this.state.fullAddress} onChange={(e) => this.changeaddress(e)} /></div>
+              <div class="form-floating mb-3"><input type="text" class="form-control" value={this.state.phoneNumber} onChange={(e) => this.changePhone(e)} /></div>
+              <div class="form-floating mb-3"><input type="text" class="form-control" value={this.state.email} onChange={(e) => this.changeEmail(e)} /></div>
+              <div class="form-floating mb-3"><textarea type="text" class="form-control" value={this.state.fullAddress} onChange={(e) => this.changeaddress(e)} /></div>
               <label >
-                <p>Emergency Contact</p>
+                <h4>Emergency Contacts</h4>
 
 
               </label>
 
               {this.state.emergencyContacts.map((contact, index) =>
                 <div>
-                  <p>Emergency Contact {index + 1} </p>
-                  <div>First Name: <input type="text" value={contact.firstName} onChange={(e) => this.changeContact(e, index, "firstName")} /> </div>
-                  <div>Last Name: <input type="text" value={contact.lastName} onChange={(e) => this.changeContact(e, index, "lastName")} /> </div>
-                  <div>Phone: <input type="text" value={contact.phone} onChange={(e) => this.changeContact(e, index, "phone")} /> </div>
+                  <h6>Emergency Contact {index + 1} </h6>
+                  <div class="form-floating mb-3">First Name: <input type="text" class="form-control" value={contact.firstName} onChange={(e) => this.changeContact(e, index, "firstName")} /> </div>
+                  <div class="form-floating mb-3">Last Name: <input type="text" class="form-control"  value={contact.lastName} onChange={(e) => this.changeContact(e, index, "lastName")} /> </div>
+                  <div class="form-floating mb-3">Phone: <input type="text" class="form-control" value={contact.phone} onChange={(e) => this.changeContact(e, index, "phone")} /> </div>
 
 
 
@@ -241,7 +260,7 @@ class ProfileEdit extends React.Component {
 
 
 
-              <input type="submit" value="Submit" />
+              <input class="btn btn-primary btn-xl " type="submit" value="Submit" />
 
 
 

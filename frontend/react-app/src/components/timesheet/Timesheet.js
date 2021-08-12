@@ -3,6 +3,8 @@ import axios from "axios";
 import "./Timesheet.css";
 import { Holidays } from './Holidays'
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import "../../css/styles.css"
+
 class Timesheet extends Component {
 	constructor(props) {
 		super(props);
@@ -23,6 +25,8 @@ class Timesheet extends Component {
 			floatingsTaken: [],
 			vacationsTaken: [],
 
+			oldfloatingsTaken:[],
+			oldvacationsTaken:[],
 			fileUploaded: false,
 
 
@@ -62,10 +66,17 @@ class Timesheet extends Component {
 
 						if (curDate.includes(Holidays[j])) {
 							tempDays[i]['isHoliday'] = true;
+							tempDays[i]['startTime'] = 'N/A';
+							tempDays[i]['endTime'] = 'N/A';
+						 	
+							this.setState({totalCompensatedHours : this.state.totalCompensatedHours +8 });
+							this.setState({totalBillingHours: this.state.totalBillingHours +8 });
+							this.setState({days: tempDays});
+
+
 						}
 
 					}
-
 
 				}
 
@@ -101,6 +112,9 @@ class Timesheet extends Component {
 
 				this.setState({ floatingsTaken: response.data.floatings });
 				this.setState({ vacationsTaken: response.data.vacations });
+
+				this.setState({ oldfloatingsTaken: response.data.floatings });
+				this.setState({ oldvacationsTaken: response.data.vacations });
 			});
 
 		//-------------Toby's B5 initialization END-------------------------
@@ -275,7 +289,72 @@ class Timesheet extends Component {
 	}
 
 	handleSave = (event) => {
+
 		event.preventDefault();
+
+	// Toby's comment logic start
+		
+		// let numberOfFloatingRequired = this.state.floatingsTaken - this.state.oldfloatingsTaken;
+		// let numberOfVacationRequired = this.state.vacationsTaken - this.state.oldvacationsTaken;
+		// if(numberOfFloatingRequired>0){
+
+		// 	newComment = numberOfFloatingRequired + 'Floating day required';
+		// 	this.setState({comment:newComment});
+		// }
+
+
+
+		let floatingLeft = 3 - this.state.floatingsTaken.length;
+		let vacationLeft = 3 - this.state.vacationsTaken.length;
+
+		let floatingCounter = 0;
+		let  vacationCounter = 0;
+
+		for (let k = 0 ; k < this.state.days.length ; k++){
+
+			let currentDay = this.state.days[k]['date'];
+			console.log('current day is' + currentDay)
+			for(let l = 0 ; l < this.state.floatingsTaken.length ; l++){
+
+				if(this.state.floatingsTaken[l] == currentDay){
+					floatingCounter += 1;
+				}
+
+			}
+
+			for(let l = 0 ; l < this.state.vacationsTaken.length ; l++){
+
+				if(this.state.vacationsTaken[l] == currentDay){
+					vacationCounter += 1;
+				}
+
+			}
+
+		}
+		let newComment = '';
+
+		if(floatingCounter > 0){
+
+			newComment = newComment + floatingCounter + " Floating day|s required" +'/' + floatingLeft + ' floating day|s left!';
+
+		}
+
+		if(vacationCounter > 0){
+
+			newComment = newComment + "/"+vacationCounter + " Vacation day|s required" + '/' + vacationLeft+ ' vacation day|s left!';
+
+		}
+		console.log('newcomment is +' + newComment)
+
+		
+
+		this.setState({comment : newComment});
+
+
+	// Toby's comment logic end
+
+
+
 
 		const body = {
 
@@ -317,7 +396,7 @@ class Timesheet extends Component {
 			totalCompensatedHours: this.state.totalCompensatedHours,
 			submissionStatus: this.state.submissionStatus,
 			approvalStatus: this.state.approvalStatus,
-			comment: this.state.comment
+			comment: newComment
 		};
 		// const newPTO = {
 		// 	userId: this.state.userId,
@@ -343,12 +422,17 @@ class Timesheet extends Component {
 
 		axios
 			.put("http://localhost:8082/timesheet/updateTimesheet", newTimesheet)
-			.then((res) => { console.log("Success updated TimeSheet"); });
+			.then((res) => { console.log("Success updated TimeSheet"); 
+			
+			
+			alert('Timesheet Saved!');
+		});
 		// axios
 		// 	.post("http://localhost:8082/timesheet/savepto", newPTO)
 		// 	.then((res) => {});
 
-
+ 
+	
 
 	}
 
@@ -503,6 +587,20 @@ class Timesheet extends Component {
 			stateCopy.days[currentindex]['isFloating'] = false;
 			stateCopy.days[currentindex]['isHoliday'] = !stateCopy.days[currentindex]['isHoliday'];
 			stateCopy.days[currentindex]['isVacation'] = false;
+		
+			let tempDays = this.state.days;
+			tempDays[currentindex]['isHoliday'] = true;
+			tempDays[currentindex]['startTime'] = 'N/A';//
+			tempDays[currentindex]['endTime'] = 'N/A';
+
+
+
+
+			stateCopy.totalBillingHours = this.getTotalBillingHours(tempDays);
+			stateCopy.totalCompensatedHours = this.getTotalCompensatedHours(tempDays);
+
+			this.setState({ days: tempDays });
+
 		}
 
 		// if(this.state.vacationsTaken.length >= 3 && currenttype == 'vacation'){
@@ -590,6 +688,17 @@ class Timesheet extends Component {
 
 		this.setState(stateCopy);//
 
+		// let newComment = '';
+
+		// let numberOfFloatingRequired = this.state.floatingsTaken - this.state.oldfloatingsTaken;
+		// let numberOfVacationRequired = this.state.vacationsTaken - this.state.oldvacationsTaken;
+
+		// if(numberOfFloatingRequired>0){
+
+		// 	newComment = numberOfFloatingRequired + 'Floating day required';
+		// 	this.setState({comment:newComment});
+		// }
+ 
 	}
 
 
@@ -629,7 +738,7 @@ class Timesheet extends Component {
 
 		return (
 			<>
-				<div>
+				<div class="page-section portfolio">
 					<label htmlFor="weekEnding">Week Ending</label>
 					{/* <input id="weekEnding" type="date" value={this.state.weekEndingFormat} onChange={this.handleWeekEndingChange} /> */}
 					<select value={this.state.weekEndingFormat} onChange={this.handleWeekEndingChange}>
@@ -702,8 +811,8 @@ class Timesheet extends Component {
 								</Tooltip>
 							}
 						>
-							<button
-								type="button"
+							<button 
+								type="button" class="btn btn-primary"
 								onClick={this.handleDefault}
 							>
 								Set Default
@@ -817,12 +926,14 @@ class Timesheet extends Component {
 				</div>
 
 				<div>
+
+				 
 					<select id="timesheet-select">
 						<option value="">--Please choose an option--</option>
 						<option value="approved">Approved Timesheet</option>
 						<option value="unapproved">Unapproved Timesheet</option>
 					</select>
-
+				
 
 
 					{/* Toby's file upload start */}
@@ -832,7 +943,10 @@ class Timesheet extends Component {
 
 					{/*<button type="button" onClick={ ()=>this.savePTO() }> Save PTO</button>	*/}
 
-					<input type="file" name="file" onChange={this.onFileChangeHandler} /><button type="button" onClick={this.handleSave}>Save</button>
+					<input type="file" name="file" onChange={this.onFileChangeHandler} />
+				
+					<button class="btn btn-primary" type="button" onClick={this.handleSave}>Save</button>
+				 
 					{/*<button type="button" onClick={this.handleSave}>Save</button>*/}
 				</div>
 			</>
