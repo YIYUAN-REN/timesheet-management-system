@@ -175,8 +175,8 @@ class Timesheet extends Component {
 		localStorage.setItem("weekEnding", newWeekEnding);
 
 		// get new timesheet
-		let userId = 1;
-		// let userId = localStorage.getItem("userId");
+		// let userId = 1;
+		let userId = localStorage.getItem("userId");
 		axios
 			.get("http://localhost:8082/timesheet/getTimesheet?userId=" + userId + "&weekEnding=" + newWeekEnding)
 			.then((response) => {
@@ -335,15 +335,20 @@ class Timesheet extends Component {
 
 		if(floatingCounter > 0){
 
-			newComment = newComment + floatingCounter + " Floating day|s required" +'/' + floatingLeft + ' floating day|s left!';
+			newComment = newComment + floatingCounter + " Floating day required" +'/' + floatingLeft + ' floating day left!';
 
 		}
 
-		if(vacationCounter > 0){
+		if(vacationCounter > 0 && floatingCounter >0){
 
-			newComment = newComment + "/"+vacationCounter + " Vacation day|s required" + '/' + vacationLeft+ ' vacation day|s left!';
-
-		}
+			            newComment = newComment + "/"+vacationCounter + " Vacation day required" + '/' + vacationLeft+ ' vacation day left!';
+			
+			        }
+			        else if(vacationCounter > 0 ){
+			
+			            newComment = newComment +  vacationCounter + " Vacation day required" + '/' + vacationLeft+ ' vacation day left!';
+			
+			        }
 		console.log('newcomment is +' + newComment)
 
 		
@@ -366,7 +371,7 @@ class Timesheet extends Component {
 
 		const file = new FormData()
 		file.append('title', 'timesheet');
-		file.append('userId', 1);
+		file.append('userId', localStorage.getItem("userId"));
 		file.append('file', this.state.selectedFile);
 		this.state.fileUploaded = true;
 		console.log(file);
