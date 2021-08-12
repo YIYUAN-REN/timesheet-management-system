@@ -33,6 +33,11 @@ class Timesheet extends Component {
 
 
 	componentDidMount() {
+		// redirected to 3001
+        if (localStorage.getItem("token") == null && this.props.location.search == "") {
+            window.location.href ="http://localhost:3001";
+        }
+
 		let userId = 1;
 		let weekEnding = "01/09/2021";
 		// let userId = localStorage.getItem("userId");
@@ -106,7 +111,7 @@ class Timesheet extends Component {
 		let firstDay = new Date();
 		firstDay.setMonth(0);// JAN
 		firstDay.setDate(3);// 3
-		let diffDays = Math.ceil((nowDate - firstDay) / (24 * 60 * 60 * 1000));
+		let diffDays = Math.ceil((nowDate - firstDay) / (24 * 60 * 60 * 1000)) + 1;
 		let week = Math.ceil(diffDays / 7);
 		let weekNumber = week === 0 ? 1 : week;
 
@@ -117,6 +122,7 @@ class Timesheet extends Component {
 		}
 
 		console.log(nowDate);
+		console.log(week);
 
 		return newWeekEndingChecks;
 	}

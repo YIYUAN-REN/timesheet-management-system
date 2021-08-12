@@ -4,64 +4,81 @@ import { Table } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 class Summary extends Component {
-    userId= "1";
+    userId = "1";
 
     state = {
-        timeList:[],
+        timeList: [],
         count: 5,
         show: "Show More",
     };
 
-    renderTableData(){
+    renderTableData() {
         return this.state.timeList.
-            slice(0, this.state.count).map((summary, ) => {
-            const {
-                id,
-                weekEnding,
-                totalBillingHours,
-                submissionStatus,
-                approvalStatus,
-                comment,
-            } = summary;
-            let option = "";
-            let timesheetUrl = "http://localhost:8082/timesheet/getTimesheet?userId=" + this.userId + "&weekEnding=" + weekEnding;
-            if(approvalStatus === "Approved"){
-                option = (
-                    <a href="/view" onClick={this.handleOption(summary)}>
-                        {" "}
-                        View
-                    </a>
+            slice(0, this.state.count).map((summary,) => {
+                const {
+                    id,
+                    weekEnding,
+                    totalBillingHours,
+                    submissionStatus,
+                    approvalStatus,
+                    comment,
+                } = summary;
+                let option = "";
+                let timesheetUrl = "http://localhost:8082/timesheet/getTimesheet?userId=" + this.userId + "&weekEnding=" + weekEnding;
+                if (approvalStatus === "Approved") {
+                    option = (
+                        <a href="/view" onClick={this.handleOption(summary)}>
+                            {" "}
+                            View
+                        </a>
+                    );
+                }
+                else {
+                    option = (
+                        <a href="/timesheet" onClick={this.handleOption(summary)}>
+                            {" "}
+                            Edit
+                        </a>
+                    );
+                }
+                return (
+                    <tr key={id}>
+                        <td>{weekEnding}</td>
+                        <td>{totalBillingHours}</td>
+                        <td>{submissionStatus}</td>
+                        <td>{approvalStatus}</td>
+                        <td>{option}</td>
+                        <td>{comment}</td>
+                    </tr>
                 );
-            }
-            else {
-                option = (
-                    <a href= "/timesheet" onClick={this.handleOption(summary)}>
-                        {" "}
-                        Edit
-                    </a>
-                );
-            }
-            return (
-                <tr key={id}>
-                    <td>{weekEnding}</td>
-                    <td>{totalBillingHours}</td>
-                    <td>{submissionStatus}</td>
-                    <td>{approvalStatus}</td>
-                    <td>{option}</td>
-                    <td>{comment}</td>
-                </tr>
-            );
-        })
+            })
 
     }
 
     componentDidMount() {
+        // get token from 3001 port
+        if (localStorage.getItem("token") == null && this.props.location.search != "") {
+            const query = this.props.location.search; // ?userId=...&token=...
+            const array = query.split("&");
+            const userId = array[0].substr(8);
+            const token = array[1].substr(6);
+            localStorage.setItem("userId", userId);
+            localStorage.setItem("token", token);
+            window.location.href = "http://localhost:3000/summary";
+        }
+        // redirected to 3001
+        if (localStorage.getItem("token") == null && this.props.location.search == "") {
+            window.location.href = "http://localhost:3001";
+        }
+
+        console.log(this.props.location);
+
         let userId = localStorage.getItem("userID");
         this.userId = 1;
-        axios.get(`http://localhost:8082/timesheet/getAllTimesheets/`+this.userId)
+        axios.get(`http://localhost:8082/timesheet/getAllTimesheets/` + this.userId)
             .then(res => {
                 console.log(res.data)
-                this.setState({timeList: res.data})
+                this.setState({ timeList: res.data })
             })
     }
 
@@ -92,20 +109,20 @@ class Summary extends Component {
 
         return (
             <div>
-            <Table striped bordered hover>
-                <thead>
-                <tr>
-                    <th>WeekEnding</th>
-                    <th>TotalHours</th>
-                    <th>SubmissionStatus</th>
-                    <th>ApprovalStatus</th>
-                    <th>Option</th>
-                    <th>Comments</th>
-                </tr>
-                </thead>
-                {/*<tbody>{tableRows()}</tbody>*/}
-                <tbody>{this.renderTableData()}</tbody>
-            </Table>
+                <Table striped bordered hover>
+                    <thead>
+                        <tr>
+                            <th>WeekEnding</th>
+                            <th>TotalHours</th>
+                            <th>SubmissionStatus</th>
+                            <th>ApprovalStatus</th>
+                            <th>Option</th>
+                            <th>Comments</th>
+                        </tr>
+                    </thead>
+                    {/*<tbody>{tableRows()}</tbody>*/}
+                    <tbody>{this.renderTableData()}</tbody>
+                </Table>
                 <button
                     type="button"
                     className="button-time"

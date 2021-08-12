@@ -16,7 +16,8 @@ export default class Login extends Component {
 
 	componentDidMount() {
 		if (localStorage.getItem("token") != null) {
-			this.props.history.push("/summary");
+			localStorage.removeItem('userId');
+			localStorage.removeItem('token');
 		}
 	}
 
@@ -32,9 +33,10 @@ export default class Login extends Component {
 					localStorage.setItem("token", response.data.token);
 					localStorage.setItem("userId", response.data.user.id);
 					this.setState({ message: "" });
-					this.props.history.push("/summary");
+					window.location.href ="http://localhost:3000/summary?userId=" + localStorage.getItem("userId") + "&token=" + localStorage.getItem("token");
+				} else {
+					this.setState({ message: "Fail!" });
 				}
-				this.setState({ message: "Fail!" });
 			})
 	};
 
@@ -43,7 +45,6 @@ export default class Login extends Component {
 			<>
 				<h3>Welcome to Timesheet Management</h3>
 				<div>
-					{this.state.username}
 					<input type="text" id="username" placeholder="username" value={this.state.username} onChange={(e) => {
 						this.setState({
 							username: e.target.value,
