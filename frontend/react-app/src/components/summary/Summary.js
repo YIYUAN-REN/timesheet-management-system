@@ -14,7 +14,7 @@ class Summary extends Component {
 	};
 
 	renderTableData() {
-		return this.state.timeList.
+		return this.state.timeList.sort((a, b) => a.timeM > b.timeM ? 1:-1).
 			slice(0, this.state.count).map((summary,) => {
 				const {
 					id,
