@@ -4,6 +4,7 @@ import ProfileEdit from '../profile/Profile';
 import TimeSheet from '../timesheet/Timesheet';
 import Summary from '../summary/Summary';
 import Login from '../login/Login';
+import viewTimeSheet from '../timesheet/viewTimeSheet';
 
 export default class Navigation extends Component {
     state = {
@@ -33,6 +34,7 @@ export default class Navigation extends Component {
                         <Route path='/summary' component={Summary} />
                         <Route path='/timesheet' component={TimeSheet} />
                         <Route path='/profile' component={ProfileEdit} />
+                        <Route path='/viewTimesheet' component={viewTimeSheet} />
                     </Switch>
                 </div>
             </Router>

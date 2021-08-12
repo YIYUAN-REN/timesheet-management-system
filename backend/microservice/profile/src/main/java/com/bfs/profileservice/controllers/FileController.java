@@ -31,14 +31,14 @@ public class FileController {
 	            produces = MediaType.APPLICATION_JSON_VALUE
 	    )
 	    public ResponseEntity<String> saveTodo(@RequestParam("title") String title,
-	                                         @RequestParam("userid") String userid,
+	                                         @RequestParam("userId") String userId,
 	                                         @RequestParam("file") MultipartFile file
 	                                       ) {
 	    	
 	    	System.out.println("bug check file title  " + title);
-	    	System.out.println("bug check file userid  " + userid);
+	    	System.out.println("bug check file userId  " + userId);
 	    	System.out.println("bug check file  " + file.isEmpty());
-	        return new ResponseEntity<String>(service.saveDocument(title, file , Integer.parseInt(userid) ), HttpStatus.OK);
+	        return new ResponseEntity<String>(service.saveDocument(title, file , Integer.parseInt(userId) ), HttpStatus.OK);
 	    }
 	    
 	    

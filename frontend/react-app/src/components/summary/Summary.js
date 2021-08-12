@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Table } from 'react-bootstrap';
+import {OverlayTrigger, Table, Tooltip} from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
+
 class Summary extends Component {
-    userId= "1";
+    // userId= "1";
 
     state = {
         timeList:[],
@@ -22,21 +23,20 @@ class Summary extends Component {
                 submissionStatus,
                 approvalStatus,
                 comment,
+
             } = summary;
             let option = "";
-            let timesheetUrl = "http://localhost:8082/timesheet/getTimesheet?userId=" + this.userId + "&weekEnding=" + weekEnding;
+            // let timesheetUrl = "http://localhost:8082/timesheet/getTimesheet?userId=" + this.userId + "&weekEnding=" + weekEnding;
             if(approvalStatus === "Approved"){
                 option = (
-                    <a href="/view" onClick={this.handleOption(summary)}>
-                        {" "}
+                    <a href="/viewTimesheet" onClick={this.handleOption(summary)}>
                         View
                     </a>
                 );
             }
             else {
                 option = (
-                    <a href= "/timesheet" onClick={this.handleOption(summary)}>
-                        {" "}
+                    <a href="/timesheet" onClick={this.handleOption(summary)}>
                         Edit
                     </a>
                 );
@@ -45,7 +45,26 @@ class Summary extends Component {
                 <tr key={id}>
                     <td>{weekEnding}</td>
                     <td>{totalBillingHours}</td>
-                    <td>{submissionStatus}</td>
+                    <td>{submissionStatus}
+                        {['right'].map((placement) => (
+                            <OverlayTrigger
+                                key={placement}
+                                placement={placement}
+                                overlay={
+                                    <Tooltip id={`tooltip-${placement}`}>
+                                        Items due: Proof of Approved TimeSheet
+                                    </Tooltip>
+                                }
+                            >
+                                <button
+                                    type="button"
+                                    hidden = {approvalStatus != "Approved" && submissionStatus != "Not Started"}
+                                >
+                                    i
+                                </button>
+                            </OverlayTrigger>
+                        ))}
+                    </td>
                     <td>{approvalStatus}</td>
                     <td>{option}</td>
                     <td>{comment}</td>
@@ -56,9 +75,8 @@ class Summary extends Component {
     }
 
     componentDidMount() {
-        let userId = localStorage.getItem("userID");
-        this.userId = 1;
-        axios.get(`http://localhost:8082/timesheet/getAllTimesheets/`+this.userId)
+        let userId = localStorage.getItem("userId");
+        axios.get(`http://localhost:8082/timesheet/getAllTimesheets/`+userId)
             .then(res => {
                 console.log(res.data)
                 this.setState({timeList: res.data})
@@ -70,6 +88,9 @@ class Summary extends Component {
         localStorage.setItem("userId", 1);
         localStorage.setItem("weekEnding", summary.weekEnding);
         // axios
+        // axios
+        //     .get("http://localhost:8082/timesheet/getTimesheet?userId=" + this.userId + "&weekEnding=" + this.weekEnding)
+        //     .then((res) => { console.log("redirected to timesheet"); });
     };
 
     handleShowMore = () => {

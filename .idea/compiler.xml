@@ -8,12 +8,14 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="timesheet" />
+        <module name="profile-service" />
         <module name="service-discovery" />
         <module name="gateway" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="gateway" target="1.8" />
+      <module name="profile-service" target="1.8" />
       <module name="service-discovery" target="1.8" />
       <module name="timesheet" target="1.8" />
     </bytecodeTargetLevel>
@@ -21,6 +23,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="gateway" options="-parameters" />
+      <module name="profile-service" options="-parameters" />
       <module name="service-discovery" options="-parameters" />
       <module name="timesheet" options="-parameters" />
     </option>

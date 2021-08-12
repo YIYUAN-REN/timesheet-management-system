@@ -10,7 +10,7 @@ class ProfileEdit extends React.Component{
                super(props);
                
                 this.state = {
-                    userid: 1,
+                    userId: 1,
                     phoneNumber : '',
                     email : '',
                     fullAddress:'',
@@ -168,7 +168,7 @@ onFileChangeHandler=event=>{
 onFileClickHandler = () => {
   const data = new FormData() 
   data.append('title','avatar');
-  data.append('userid',this.state.userid);
+  data.append('userId',this.state.userId);
   data.append('file', this.state.selectedFile);
 
   console.log(data);
