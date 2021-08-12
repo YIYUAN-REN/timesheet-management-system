@@ -37,7 +37,7 @@ public class FileServiceImpl implements FileService{
 	 
 	
 	@Override
-	public String saveDocument(String title , MultipartFile file, int userid ) {
+	public String saveDocument(String title , MultipartFile file, int userId ) {
 	
 
 						 
@@ -59,7 +59,7 @@ public class FileServiceImpl implements FileService{
 				     
 //				     String path = String.format("%s/%s", BucketName.TODO_IMAGE.getBucketName(), UUID.randomUUID());
 				     
-				     String path = String.format("%s/%s", BucketName.TODO_IMAGE.getBucketName(), "avatar"+userid);
+				     String path = String.format("%s/%s", BucketName.TODO_IMAGE.getBucketName(), "avatar"+userId);
 				     
 				     String fileName = String.format("%s", file.getOriginalFilename());
 				     
@@ -74,7 +74,7 @@ public class FileServiceImpl implements FileService{
 			        	String createdDate= new SimpleDateFormat("yyyy-MM-dd").format(date);
 			        	 
 			   
-			        ProfileUser pu =  profileRepository.findByUserId(userid);
+			        ProfileUser pu =  profileRepository.findByUserId(userId);
 			          System.out.println(pu);
 			          if(file.getContentType().contains("image")  ) {
 			        	  

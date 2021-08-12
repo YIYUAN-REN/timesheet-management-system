@@ -154,19 +154,24 @@ class ProfileEdit extends React.Component {
   }
 
 
-  //-------------------------------Toby's file upload start--------------
-
-  onFileChangeHandler = event => {
-
-    console.log(event.target.files[0])
-
-    this.setState({
-      selectedFile: event.target.files[0],
-      loaded: 0,
-    })
-
+  onFileClickHandler = () => {
+    const data = new FormData()
+    data.append('title', 'avatar');
+    data.append('userId', this.state.userId);
+    data.append('file', this.state.selectedFile);
   }
 
+    onFileChangeHandler = event => {
+
+      console.log(event.target.files[0])
+
+      this.setState({
+        selectedFile: event.target.files[0],
+        loaded: 0,
+      })
+
+    }
+  
 
   onFileClickHandler = () => {
     const data = new FormData()
@@ -246,6 +251,7 @@ class ProfileEdit extends React.Component {
       </div>
     );
   }
+
 
 
 }

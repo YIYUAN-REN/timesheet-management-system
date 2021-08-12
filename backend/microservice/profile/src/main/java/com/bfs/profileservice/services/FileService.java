@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface FileService {
 	
-	String saveDocument(String title,  MultipartFile file , int userid );
+	String saveDocument(String title,  MultipartFile file , int userId );
 
     byte[] downloadDocument(Integer id);
 

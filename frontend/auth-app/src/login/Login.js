@@ -18,7 +18,16 @@ export default class Login extends Component {
 		if (localStorage.getItem("token") != null) {
 			localStorage.removeItem('userId');
 			localStorage.removeItem('token');
+			localStorage.removeItem('weekEnding');
 		}
+	}
+
+	// MM/DD/YYYY
+	getWeekEnding(date) {
+		let month = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+		let day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+		let year = date.getFullYear();
+		return month + "/" + day + "/" + year;
 	}
 
 	onSubmit = (e) => {
@@ -32,8 +41,10 @@ export default class Login extends Component {
 				if (response.data.token != undefined && response.data.user != undefined) {
 					localStorage.setItem("token", response.data.token);
 					localStorage.setItem("userId", response.data.user.id);
+					localStorage.setItem("weekEnding", this.getWeekEnding(new Date()));
 					this.setState({ message: "" });
-					window.location.href ="http://localhost:3000/summary?userId=" + localStorage.getItem("userId") + "&token=" + localStorage.getItem("token");
+					window.location.href ="http://localhost:3000/summary?userId=" + localStorage.getItem("userId") + 
+						"&token=" + localStorage.getItem("token") + "&weekEnding=" + localStorage.getItem("weekEnding");
 				} else {
 					this.setState({ message: "Fail!" });
 				}

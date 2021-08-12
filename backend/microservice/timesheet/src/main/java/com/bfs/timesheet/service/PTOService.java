@@ -15,9 +15,9 @@ public class PTOService {
 	 @Autowired
 	 private PTORepository ptoRepository;
 	 
-	 public PTO getPTO(Integer userid ) {
+	 public PTO getPTO(Integer userId ) {
 		 
-		 PTO pto = ptoRepository.findByUserId(userid);
+		 PTO pto = ptoRepository.findByUserId(userId);
 		 
 		 return pto;
 		 
@@ -25,15 +25,15 @@ public class PTOService {
 	 
 	 
 	 
-	public PTO savePTO(Integer userid, List<String> floatings, List<String> vacations) {
+	public PTO savePTO(Integer userId, List<String> floatings, List<String> vacations) {
 		 
-		 PTO pto = ptoRepository.findByUserId(userid);
+		 PTO pto = ptoRepository.findByUserId(userId);
 		 
 		 System.out.println(pto);
 		 if(pto==null) {
 			 
 			 pto = new PTO();
-			 pto.setUserId(userid);
+			 pto.setUserId(userId);
 			 pto.setFloatings(floatings);
 			 pto.setVacations(vacations);
 			 ptoRepository.save(pto);

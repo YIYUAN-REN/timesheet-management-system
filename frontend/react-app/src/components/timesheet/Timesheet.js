@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React, {Component, useState} from "react";
 import axios from "axios";
 import "./Timesheet.css";
 import { Holidays } from './Holidays'
-
+import {Button, OverlayTrigger, Tooltip} from 'react-bootstrap';
 class Timesheet extends Component {
 	constructor(props) {
 		super(props);
@@ -15,13 +15,15 @@ class Timesheet extends Component {
 			totalBillingHours: 0,
 			totalCompensatedHours: 0,
 			submissionStatus: "",
-			approvalStatus: "",
+			approvalStatus: "Not Started",
 			comment: "",
 			weekEndingFormat: "",
 			weekEndingChecks: [],
 
 			floatingsTaken: [],
 			vacationsTaken: [],
+
+			fileUploaded: false,
 
 
 		}
@@ -38,8 +40,9 @@ class Timesheet extends Component {
             window.location.href ="http://localhost:3001";
         }
 
-		let userId = 1;
-		let weekEnding = "01/09/2021";
+		let userId = localStorage.getItem("userId");
+		let weekEnding = localStorage.getItem("weekEnding");
+		// let weekEnding = "01/09/2021";
 		// let userId = localStorage.getItem("userId");
 		// let weekEnding = localStorage.getItem("weekEnding");
 		axios
@@ -268,18 +271,25 @@ class Timesheet extends Component {
 
 		axios
 			.put("http://localhost:8082/timesheet/updateDefault", newTemplate)
-			.then((res) => { });
+			.then((res) => { console.log("Success updated Template");});
 	}
 
 	handleSave = (event) => {
 		event.preventDefault();
+		var status = document.getElementById("timesheet-select")
+		if(status.value == "approved" && this.state.fileUploaded == true) this.state.submissionStatus = "Complete";
+		else this.state.submissionStatus = "Incomplete"
+		// console.log(status.value);
+		// console.log(this.state.fileUploaded);
+		// this.state.approvalStatus = "Approved";
+		console.log(this.state.submissionStatus);
 		const newTimesheet = {
 			userId: this.state.userId,
 			weekEnding: this.state.weekEnding,
 			days: this.state.days,
 			totalBillingHours: this.state.totalBillingHours,
 			totalCompensatedHours: this.state.totalCompensatedHours,
-			submissionStatus: "Incomplete",
+			submissionStatus: this.state.submissionStatus,
 			approvalStatus: this.state.approvalStatus,
 			comment: this.state.comment
 		};
@@ -295,6 +305,22 @@ class Timesheet extends Component {
 			vacations: this.state.vacationsTaken
 
 		}
+
+		const file = new FormData()
+		file.append('title', 'timesheet');
+		file.append('userId', 1);
+		file.append('file', this.state.selectedFile);
+		this.state.fileUploaded = true;
+		console.log(file);
+
+		axios.post("http://localhost:9090/file/uploadfile", file, {  	 //------------url needs to be changed later
+			// receive two    parameter endpoint url ,form data
+		})
+			.then(res => { // then print response status
+
+
+				console.log(res);
+			})
 
 		axios({
 			method: "post",
@@ -338,24 +364,24 @@ class Timesheet extends Component {
 
 
 
-	onFileClickHandler = () => {
-		const data = new FormData()
-		data.append('title', 'timesheet');
-		data.append('userid', "0");
-		data.append('file', this.state.selectedFile);
-
-		console.log(data);
-
-		axios.post("http://localhost:9090/file/uploadfile", data, {  	 //------------url needs to be changed later
-			// receive two    parameter endpoint url ,form data
-		})
-			.then(res => { // then print response status
-
-
-				console.log(res);
-			})
-
-	}
+	// onFileClickHandler = () => {
+	// 	const data = new FormData()
+	// 	data.append('title', 'timesheet');
+	// 	data.append('userId', 1);
+	// 	data.append('file', this.state.selectedFile);
+	// 	this.state.fileUploaded = true;
+	// 	console.log(data);
+	//
+	// 	axios.post("http://localhost:9090/file/uploadfile", data, {  	 //------------url needs to be changed later
+	// 		// receive two    parameter endpoint url ,form data
+	// 	})
+	// 		.then(res => { // then print response status
+	//
+	//
+	// 			console.log(res);
+	// 		})
+	//
+	// }
 
 	//-------------------------------Toby's  fileupload end----------------
 
@@ -596,6 +622,7 @@ class Timesheet extends Component {
 	//-------Toby B5 -------------------------End
 
 	render() {
+
 		return (
 			<>
 				<div>
@@ -659,12 +686,27 @@ class Timesheet extends Component {
 					<textarea id="billingHours" value={this.state.totalBillingHours} rows="1" cols="10" disabled />
 					<label htmlFor="compensatedHours">Total Compensated Hours</label>
 					<textarea id="compensatedHours" value={this.state.totalCompensatedHours} rows="1" cols="10" disabled />
-					<button
-						type="button"
-						onClick={this.handleDefault}
-					>
-						Set Default
-					</button>
+
+					{['right'].map((placement) => (
+						<OverlayTrigger
+							key={placement}
+							placement={placement}
+							overlay={
+								<Tooltip id={`tooltip-${placement}`}>
+									Save daily hours as default;
+									future weekly timesheet will show same hours.
+								</Tooltip>
+							}
+						>
+							<button
+								type="button"
+								onClick={this.handleDefault}
+							>
+								Set Default
+							</button>
+						</OverlayTrigger>
+					))}
+
 				</div>
 
 				<div>
@@ -771,7 +813,8 @@ class Timesheet extends Component {
 				</div>
 
 				<div>
-					<select>
+					<select id = "timesheet-select">
+						<option value="">--Please choose an option--</option>
 						<option value="approved">Approved Timesheet</option>
 						<option value="unapproved">Unapproved Timesheet</option>
 					</select>
@@ -779,13 +822,14 @@ class Timesheet extends Component {
 
 
 					{/* Toby's file upload start */}
-					<input type="file" name="file" onChange={this.onFileChangeHandler} /> <button type="button" class="btn btn-success btn-block" onClick={this.onFileClickHandler}>Upload</button>
+					{/*<input type="file" name="file" onChange={this.onFileChangeHandler} /> <button type="button" class="btn btn-success btn-block" onClick={this.onFileClickHandler}>Upload</button>*/}
 					{/* Toby's file upload end */}
 
 
 					{/*<button type="button" onClick={ ()=>this.savePTO() }> Save PTO</button>	*/}
 
-					<button type="button" onClick={this.handleSave}>Save</button>
+					<input type="file" name="file" onChange={this.onFileChangeHandler} /><button type="button" onClick={this.handleSave}>Save</button>
+					{/*<button type="button" onClick={this.handleSave}>Save</button>*/}
 				</div>
 			</>
 
@@ -794,3 +838,7 @@ class Timesheet extends Component {
 }
 
 export default Timesheet;
+
+
+
+
