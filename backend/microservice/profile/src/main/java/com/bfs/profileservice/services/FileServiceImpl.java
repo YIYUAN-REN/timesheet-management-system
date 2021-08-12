@@ -72,10 +72,11 @@ public class FileServiceImpl implements FileService{
 				     
 				     	Date date = new Date();
 			        	String createdDate= new SimpleDateFormat("yyyy-MM-dd").format(date);
-			        	 
-			   
+
 			        ProfileUser pu =  profileRepository.findByUserId(userId);
 			          System.out.println(pu);
+			          
+			          
 			          if(file.getContentType().contains("image")  ) {
 			        	  
 			        	 pu.setProfilePicturePath(path+"/"+fileName);
@@ -83,7 +84,7 @@ public class FileServiceImpl implements FileService{
 			        	  
 			        	  
 			          }
-
+				    
 				        return path+"/"+fileName;
 	
 	

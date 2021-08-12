@@ -1,8 +1,8 @@
-import React, {Component, useState} from "react";
+import React, { Component, useState } from "react";
 import axios from "axios";
 import "./Timesheet.css";
 import { Holidays } from './Holidays'
-import {Button, OverlayTrigger, Tooltip} from 'react-bootstrap';
+import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 class Timesheet extends Component {
 	constructor(props) {
 		super(props);
@@ -36,9 +36,9 @@ class Timesheet extends Component {
 
 	componentDidMount() {
 		// redirected to 3001
-        if (localStorage.getItem("token") == null && this.props.location.search == "") {
-            window.location.href ="http://localhost:3001";
-        }
+		if (localStorage.getItem("token") == null && this.props.location.search == "") {
+			window.location.href = "http://localhost:3001";
+		}
 
 		let userId = localStorage.getItem("userId");
 		let weekEnding = localStorage.getItem("weekEnding");
@@ -271,16 +271,42 @@ class Timesheet extends Component {
 
 		axios
 			.put("http://localhost:8082/timesheet/updateDefault", newTemplate)
-			.then((res) => { console.log("Success updated Template");});
+			.then((res) => { console.log("Success updated Template"); });
 	}
 
 	handleSave = (event) => {
 		event.preventDefault();
+
+		const body = {
+
+			userId: this.state.userId,
+			floatings: this.state.floatingsTaken,
+			vacations: this.state.vacationsTaken
+
+		}
+
+		const file = new FormData()
+		file.append('title', 'timesheet');
+		file.append('userId', 1);
+		file.append('file', this.state.selectedFile);
+		this.state.fileUploaded = true;
+		console.log(file);
+		console.log("file upload: " + this.state.fileUploaded);
+
+		axios.post("http://localhost:9090/file/uploadfile", file, {  	 //------------url needs to be changed later
+			// receive two    parameter endpoint url ,form data
+		})
+			.then(res => { // then print response status
+
+
+				console.log(res);
+			})
+
 		var status = document.getElementById("timesheet-select")
-		if(status.value == "approved" && this.state.fileUploaded == true) this.state.submissionStatus = "Complete";
+		if (status.value == "approved" && this.state.fileUploaded == true) this.state.submissionStatus = "Complete";
 		else this.state.submissionStatus = "Incomplete"
-		// console.log(status.value);
-		// console.log(this.state.fileUploaded);
+		console.log(status.value);
+		console.log(this.state.fileUploaded);
 		// this.state.approvalStatus = "Approved";
 		console.log(this.state.submissionStatus);
 		const newTimesheet = {
@@ -298,29 +324,7 @@ class Timesheet extends Component {
 		// 	floatings: this.state.floatingsTaken,
 		// 	vacations: this.state.vacationsTaken
 		// }
-		const body = {
 
-			userId: this.state.userId,
-			floatings: this.state.floatingsTaken,
-			vacations: this.state.vacationsTaken
-
-		}
-
-		const file = new FormData()
-		file.append('title', 'timesheet');
-		file.append('userId', 1);
-		file.append('file', this.state.selectedFile);
-		this.state.fileUploaded = true;
-		console.log(file);
-
-		axios.post("http://localhost:9090/file/uploadfile", file, {  	 //------------url needs to be changed later
-			// receive two    parameter endpoint url ,form data
-		})
-			.then(res => { // then print response status
-
-
-				console.log(res);
-			})
 
 		axios({
 			method: "post",
@@ -813,7 +817,7 @@ class Timesheet extends Component {
 				</div>
 
 				<div>
-					<select id = "timesheet-select">
+					<select id="timesheet-select">
 						<option value="">--Please choose an option--</option>
 						<option value="approved">Approved Timesheet</option>
 						<option value="unapproved">Unapproved Timesheet</option>

@@ -1,39 +1,29 @@
 package com.bfs.timesheet.service;
 
 import com.bfs.timesheet.domain.Day;
-import com.bfs.timesheet.domain.Template;
 import com.bfs.timesheet.domain.Timesheet;
-import com.bfs.timesheet.domain.User;
-import com.bfs.timesheet.repository.TemplateRepository;
 import com.bfs.timesheet.repository.TimesheetRepository;
-import com.bfs.timesheet.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class TimesheetService {
     @Autowired
     private TimesheetRepository timesheetRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private TemplateRepository templateRepository;
-
-    public void postTimesheet() {
+    public void postTimesheet(Integer id) {
         Timesheet timesheet = new Timesheet();
         List<Day> days = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
             Day day = new Day();
             if (i == 0) {
                 day.setDay("Sunday");
-                day.setDate("01/17/2021");
+                day.setDate("01/03/2021");
                 day.setStartTime("N/A");
                 day.setEndTime("N/A");
                 day.setIsFloating(false);
@@ -41,7 +31,7 @@ public class TimesheetService {
                 day.setIsVacation(false);
             } else if (i == 1) {
                 day.setDay("Monday");
-                day.setDate("01/18/2021");
+                day.setDate("01/04/2021");
                 day.setStartTime("9:00 AM");
                 day.setEndTime("6:00 PM");
                 day.setIsFloating(false);
@@ -49,7 +39,7 @@ public class TimesheetService {
                 day.setIsVacation(false);
             } else if (i == 2) {
                 day.setDay("Tuesday");
-                day.setDate("01/19/2021");
+                day.setDate("01/05/2021");
                 day.setStartTime("9:00 AM");
                 day.setEndTime("6:00 PM");
                 day.setIsFloating(false);
@@ -57,7 +47,7 @@ public class TimesheetService {
                 day.setIsVacation(false);
             }  else if (i == 3) {
                 day.setDay("Wednesday");
-                day.setDate("01/20/2021");
+                day.setDate("01/06/2021");
                 day.setStartTime("9:00 AM");
                 day.setEndTime("6:00 PM");
                 day.setIsFloating(false);
@@ -65,7 +55,7 @@ public class TimesheetService {
                 day.setIsVacation(false);
             }  else if (i == 4) {
                 day.setDay("Thursday");
-                day.setDate("01/21/2021");
+                day.setDate("01/07/2021");
                 day.setStartTime("9:00 AM");
                 day.setEndTime("6:00 PM");
                 day.setIsFloating(false);
@@ -73,7 +63,7 @@ public class TimesheetService {
                 day.setIsVacation(false);
             }  else if (i == 5) {
                 day.setDay("Friday");
-                day.setDate("01/22/2021");
+                day.setDate("01/08/2021");
                 day.setStartTime("9:00 AM");
                 day.setEndTime("6:00 PM");
                 day.setIsFloating(false);
@@ -81,7 +71,7 @@ public class TimesheetService {
                 day.setIsVacation(false);
             } else {
                 day.setDay("Saturday");
-                day.setDate("01/23/2021");
+                day.setDate("01/09/2021");
                 day.setStartTime("N/A");
                 day.setEndTime("N/A");
                 day.setIsFloating(false);
@@ -92,7 +82,7 @@ public class TimesheetService {
         }
 
         timesheet.setUserId(1);
-        timesheet.setWeekEnding("01/23/2021");
+        timesheet.setWeekEnding("01/09/2021");
         timesheet.setDays(days);
         timesheet.setTotalBillingHours(45);
         timesheet.setTotalCompensatedHours(45);
@@ -101,93 +91,6 @@ public class TimesheetService {
         timesheet.setComment("");
         timesheetRepository.save(timesheet);
     }
-
-    public void postScheduleTimesheet() {
-        // get all users
-        List<User> users = userRepository.findAll();
-        System.out.println("users size: " + users.size());
-
-        for (User user : users) {
-            // get template for the user
-            Template template = templateRepository.findByUserId(user.getId());
-            // set seven days timesheets for the user
-            Timesheet timesheet = new Timesheet();
-            List<Day> detailedDays = getDetailedDays(template.getDays());
-            timesheet.setUserId(user.getId());
-            timesheet.setWeekEnding(getDate(7));
-            timesheet.setDays(detailedDays);
-            timesheet.setTotalBillingHours(getInitialHours(detailedDays));
-            timesheet.setTotalCompensatedHours(getInitialHours(detailedDays));
-            timesheet.setSubmissionStatus("Not Started");
-            timesheet.setApprovalStatus("N/A");
-            timesheet.setComment("");
-            System.out.println(timesheet);
-            timesheetRepository.save(timesheet);
-        }
-    }
-
-    private List<Day> getDetailedDays(List<Day> originalDays) {
-        List<Day> days = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
-            Day day = new Day();
-            day.setDay(originalDays.get(i).getDay());
-            day.setDate(getDate(i + 1));
-            day.setStartTime(originalDays.get(i).getStartTime());
-            day.setEndTime(originalDays.get(i).getEndTime());
-            day.setIsFloating(false);
-            day.setIsHoliday(false);
-            day.setIsVacation(false);
-            days.add(day);
-        }
-        return days;
-    }
-
-    private String getDate(int offset) {
-        Date date=new Date();
-        Calendar calendar = new GregorianCalendar();
-        calendar.setTime(date);
-        calendar.add(calendar.DATE, offset);
-        date=calendar.getTime();
-        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-        String dateString = formatter.format(date);
-
-        return dateString;
-    }
-
-    private int getInitialHours(List<Day> days) {
-        int hours = 0;
-        for (Day day : days) {
-            if (day.getIsFloating() || day.getIsHoliday() || day.getIsVacation()) {
-                continue;
-            }
-            if (day.getEndTime().equals("N/A") || day.getStartTime().equals("N/A") || getNumberTime(day.getEndTime()) - getNumberTime(day.getStartTime()) < 0) {
-                continue;
-            }
-            hours += getNumberTime(day.getEndTime()) - getNumberTime(day.getStartTime());
-        }
-        return hours;
-    }
-
-    private double getNumberTime(String time) {
-        if (time.equals("N/A")) {
-            return 0;
-        }
-
-        String[] array = time.split(" ");
-        String slice = array[0];
-        String suffix = array[1];
-
-        array = slice.split(":");
-        String hourString = array[0];
-        String minuteString = array[1];
-        double hour = Double.parseDouble(hourString);
-        double minute = Double.parseDouble(minuteString) / 60;
-
-        int addition = suffix.equals("PM") && hour != 12 ? 12 : 0;
-
-        return hour + minute + addition;
-    }
-
 
     public Timesheet getTimesheet(int userId, String weekEnding) {
         return timesheetRepository.findByUserIdAndWeekEnding(userId, weekEnding);
