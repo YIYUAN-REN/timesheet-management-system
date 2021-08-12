@@ -28,6 +28,11 @@ public class TimesheetController {
         timesheetService.postTimesheet(id);
     }
 
+    @PostMapping("postScheduleTimesheet")
+    public void postScheduleTimesheet() {
+        timesheetService.postScheduleTimesheet();
+    }
+
     @GetMapping("/getTimesheet")
     public Timesheet getTimesheet(@RequestParam Integer userId, @RequestParam String weekEnding) {
         return timesheetService.getTimesheet(userId, weekEnding);
