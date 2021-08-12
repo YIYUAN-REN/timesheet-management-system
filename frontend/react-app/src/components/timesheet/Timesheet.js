@@ -690,7 +690,12 @@ class Timesheet extends Component {
 					<textarea id="billingHours" value={this.state.totalBillingHours} rows="1" cols="10" disabled />
 					<label htmlFor="compensatedHours">Total Compensated Hours</label>
 					<textarea id="compensatedHours" value={this.state.totalCompensatedHours} rows="1" cols="10" disabled />
-
+					<button
+						type="button"
+						onClick={this.handleDefault}
+					>
+						Set Default
+					</button>
 					{['right'].map((placement) => (
 						<OverlayTrigger
 							key={placement}
@@ -702,12 +707,7 @@ class Timesheet extends Component {
 								</Tooltip>
 							}
 						>
-							<button
-								type="button"
-								onClick={this.handleDefault}
-							>
-								Set Default
-							</button>
+							<img src="https://img.icons8.com/color/25/000000/info--v1.png"/>
 						</OverlayTrigger>
 					))}
 

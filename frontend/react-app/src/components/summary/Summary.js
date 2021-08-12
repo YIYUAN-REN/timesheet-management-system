@@ -56,18 +56,71 @@ class Summary extends Component {
                                     </Tooltip>
                                 }
                             >
-                                <button
-                                    type="button"
-                                    hidden = {approvalStatus != "Approved" && submissionStatus != "Not Started"}
-                                >
-                                    i
-                                </button>
+                                <img src="https://img.icons8.com/color/25/000000/info--v1.png"
+                                     hidden = {approvalStatus != "Unapproved" && submissionStatus != "Not Started"|"Not Started"}
+                                />
+
+                                {/*<button*/}
+                                {/*    type="button"*/}
+                                {/*    hidden = {approvalStatus != "Approved" && submissionStatus != "Not Started"}*/}
+                                {/*>*/}
+                                {/*    i*/}
+                                {/*</button>*/}
+
                             </OverlayTrigger>
                         ))}
+                        {['right'].map((placement) => (
+                            <OverlayTrigger
+                                key={placement}
+                                placement={placement}
+                                overlay={
+                                    <Tooltip id={`tooltip-${placement}`}>
+                                        Approval denied by Admin, please contact your
+                                        HR manager
+                                    </Tooltip>
+                                }
+                            >
+                                <img src="https://img.icons8.com/color/25/000000/info--v1.png"
+                                     hidden = {approvalStatus != "Deny" && submissionStatus != "Incomplete" || approvalStatus == ("N/A"||"Approve")}
+                                />
+
+                                {/*<button*/}
+                                {/*    type="button"*/}
+                                {/*    hidden = {approvalStatus != "Approved" && submissionStatus != "Not Started"}*/}
+                                {/*>*/}
+                                {/*    i*/}
+                                {/*</button>*/}
+
+                            </OverlayTrigger>
+                        ))}
+                        {/*<img src="../assets/info.png"></img>*/}
                     </td>
                     <td>{approvalStatus}</td>
                     <td>{option}</td>
                     <td>{comment}</td>
+                    {['right'].map((placement) => (
+                        <OverlayTrigger
+                            key={placement}
+                            placement={placement}
+                            overlay={
+                                <Tooltip id={`tooltip-${placement}`}>
+                                    Total floating days left in 20XX
+                                    (year): 2 days
+                                </Tooltip>
+                            }
+                        >
+                            <img src="https://img.icons8.com/color/25/000000/info--v1.png"
+                            />
+
+                            {/*<button*/}
+                            {/*    type="button"*/}
+                            {/*    hidden = {approvalStatus != "Approved" && submissionStatus != "Not Started"}*/}
+                            {/*>*/}
+                            {/*    i*/}
+                            {/*</button>*/}
+
+                        </OverlayTrigger>
+                    ))}
                 </tr>
             );
         })
