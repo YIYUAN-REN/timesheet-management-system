@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -26,80 +27,59 @@ public class TimesheetService {
     @Autowired
     private UserRepository userRepository;
 
-    public void postTimesheet(Integer id) {
-        Timesheet timesheet = new Timesheet();
+    public void postTimesheet(String date) {
+        // get all users
+        List<User> users = userRepository.findAll();
+
+        for (User user : users) {
+            // get template for the user
+            Template template = templateRepository.findByUserId(user.getId());
+            // set seven days timesheets for the user
+            Timesheet timesheet = new Timesheet();
+            List<Day> detailedDays = getInitialDetailedDays(template.getDays(), date);
+            timesheet.setUserId(user.getId());
+            timesheet.setWeekEnding(date);
+            timesheet.setDays(detailedDays);
+            timesheet.setTotalBillingHours(getInitialHours(detailedDays));
+            timesheet.setTotalCompensatedHours(getInitialHours(detailedDays));
+            timesheet.setSubmissionStatus("Not Started");
+            timesheet.setApprovalStatus("N/A");
+            timesheet.setComment("");
+            timesheetRepository.save(timesheet);
+        }
+    }
+
+    private List<Day> getInitialDetailedDays(List<Day> originalDays, String date) {
         List<Day> days = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
             Day day = new Day();
-            if (i == 0) {
-                day.setDay("Sunday");
-                day.setDate("01/03/2021");
-                day.setStartTime("N/A");
-                day.setEndTime("N/A");
-                day.setIsFloating(false);
-                day.setIsHoliday(false);
-                day.setIsVacation(false);
-            } else if (i == 1) {
-                day.setDay("Monday");
-                day.setDate("01/04/2021");
-                day.setStartTime("9:00 AM");
-                day.setEndTime("6:00 PM");
-                day.setIsFloating(false);
-                day.setIsHoliday(false);
-                day.setIsVacation(false);
-            } else if (i == 2) {
-                day.setDay("Tuesday");
-                day.setDate("01/05/2021");
-                day.setStartTime("9:00 AM");
-                day.setEndTime("6:00 PM");
-                day.setIsFloating(false);
-                day.setIsHoliday(false);
-                day.setIsVacation(false);
-            }  else if (i == 3) {
-                day.setDay("Wednesday");
-                day.setDate("01/06/2021");
-                day.setStartTime("9:00 AM");
-                day.setEndTime("6:00 PM");
-                day.setIsFloating(false);
-                day.setIsHoliday(false);
-                day.setIsVacation(false);
-            }  else if (i == 4) {
-                day.setDay("Thursday");
-                day.setDate("01/07/2021");
-                day.setStartTime("9:00 AM");
-                day.setEndTime("6:00 PM");
-                day.setIsFloating(false);
-                day.setIsHoliday(false);
-                day.setIsVacation(false);
-            }  else if (i == 5) {
-                day.setDay("Friday");
-                day.setDate("01/08/2021");
-                day.setStartTime("9:00 AM");
-                day.setEndTime("6:00 PM");
-                day.setIsFloating(false);
-                day.setIsHoliday(false);
-                day.setIsVacation(false);
-            } else {
-                day.setDay("Saturday");
-                day.setDate("01/09/2021");
-                day.setStartTime("N/A");
-                day.setEndTime("N/A");
-                day.setIsFloating(false);
-                day.setIsHoliday(false);
-                day.setIsVacation(false);
-            }
+            day.setDay(originalDays.get(i).getDay());
+            day.setDate(getInitialDate(i - 6, date));
+            day.setStartTime(originalDays.get(i).getStartTime());
+            day.setEndTime(originalDays.get(i).getEndTime());
+            day.setIsFloating(false);
+            day.setIsHoliday(false);
+            day.setIsVacation(false);
             days.add(day);
         }
+        return days;
+    }
 
-        timesheet.setUserId(1);
-        timesheet.setWeekEnding("01/09/2021");
-        timesheet.setDays(days);
-        timesheet.setTotalBillingHours(45);
-        timesheet.setTotalCompensatedHours(45);
-        timesheet.setSubmissionStatus("Not Started");
-        timesheet.setApprovalStatus("N/A");
-        timesheet.setComment("");
-        timesheetRepository.save(timesheet);
+    private String getInitialDate(int offset, String dateStr) {
+        Date date= null;
+        try {
+            date = new SimpleDateFormat("MM/dd/yyyy").parse(dateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+        calendar.add(calendar.DATE, offset);
+        date=calendar.getTime();
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+        String dateString = formatter.format(date);
+
+        return dateString;
     }
 
     public void postScheduleTimesheet() {

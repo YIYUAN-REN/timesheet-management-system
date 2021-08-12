@@ -84,8 +84,8 @@ class Summary extends Component {
             const weekEnding = array[2].substr(11);
             localStorage.setItem("userId", userId);
             localStorage.setItem("token", token);
-            localStorage.setItem("weekEnding", weekEnding);
-            localStorage.setItem("weekEnding", "01/09/2021");
+            // localStorage.setItem("weekEnding", weekEnding);
+            localStorage.setItem("weekEnding", this.getSaturday());
             window.location.href = "http://localhost:3000/summary";
         }
         // redirected to 3001
@@ -103,6 +103,23 @@ class Summary extends Component {
                 this.setState({ timeList: res.data })
             })
     }
+
+    getSaturday() {
+        var now = new Date();
+        var nowTime = now.getTime() ;
+        var day = now.getDay();
+        var oneDayTime = 24*60*60*1000 ;
+        var SaturdayTime = nowTime - (day-6)*oneDayTime;
+        return this.getWeekEnding(new Date(SaturdayTime));
+    }
+
+	// MM/DD/YYYY
+	getWeekEnding(date) {
+		let month = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+		let day = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+		let year = date.getFullYear();
+		return month + "/" + day + "/" + year;
+	}
 
     handleOption = (summary) => (event) => {
         console.log(summary.weekEnding);
@@ -131,6 +148,7 @@ class Summary extends Component {
 
     render() {
         const count = this.count;
+        localStorage.setItem("weekEnding", this.getSaturday());
 
         return (
             <div>

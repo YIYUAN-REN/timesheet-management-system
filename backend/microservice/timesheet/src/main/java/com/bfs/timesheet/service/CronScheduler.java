@@ -10,7 +10,7 @@ public class CronScheduler {
 	@Scheduled(cron = "* * * * * SAT")
 	public void updateTemplate() {
 		
-		final String uri = "http://localhost:9090/api/...................";
+		final String uri = "http://localhost:8082/timesheet/postScheduleTimesheet";
 
 	    RestTemplate restTemplate = new RestTemplate();
 	    
