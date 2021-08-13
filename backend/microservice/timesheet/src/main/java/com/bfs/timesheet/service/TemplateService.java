@@ -19,6 +19,14 @@ public class TemplateService {
 
     public Template saveTemplate(Integer userId, List<Day> days) {
         Template originalTemp = getTemplate(userId);
+
+        for (Day day : days) {
+            day.setDate("");
+            day.setIsFloating(false);
+            day.setIsVacation(false);
+            day.setIsHoliday(false);
+        }
+
         if (originalTemp == null) {
             originalTemp = new Template();
             originalTemp.setUserId(userId);

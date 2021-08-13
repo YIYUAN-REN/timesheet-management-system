@@ -197,6 +197,43 @@ class Timesheet extends Component {
 			.get("http://localhost:8082/timesheet/getTimesheet?userId=" + userId + "&weekEnding=" + newWeekEnding)
 			.then((response) => {
 				const timesheet = response.data;
+
+				let tempDays = timesheet.days;
+				for (let i = 0; i < tempDays.length; i++) {
+					let curDate = tempDays[i]['date'];
+					for (let j = 0; j < Holidays.length; j++) {
+
+						if (curDate.includes(Holidays[j])) {
+							tempDays[i]['isHoliday'] = true;
+
+
+
+							timesheet.totalCompensatedHours = timesheet.totalCompensatedHours + 8;
+
+							let hours = 0;
+
+
+
+							if (tempDays[i].endTime == "N/A" || tempDays[i].startTime == "N/A" || this.getNumberTime(tempDays[i].endTime) - this.getNumberTime(tempDays[i].startTime) < 0) {
+								continue;
+							}
+							else {
+								hours += this.getNumberTime(tempDays[i].endTime) - this.getNumberTime(tempDays[i].startTime);
+								timesheet.totalBillingHours = timesheet.totalBillingHours - hours;
+
+							}
+
+
+							tempDays[i]['startTime'] = 'N/A';
+							tempDays[i]['endTime'] = 'N/A';
+
+							// this.setState({totalCompensatedHours : this.state.totalCompensatedHours +8 });
+							// this.setState({totalBillingHours: this.state.totalBillingHours +8 });
+							this.setState({ days: tempDays });
+						}
+					}
+				}
+
 				this.setState({
 					userId: timesheet.userId,
 					weekEnding: timesheet.weekEnding,
@@ -761,86 +798,97 @@ class Timesheet extends Component {
 		return (
 			<>
 				<div class="page-section portfolio">
-					<label htmlFor="weekEnding">Week Ending</label>
-					{/* <input id="weekEnding" type="date" value={this.state.weekEndingFormat} onChange={this.handleWeekEndingChange} /> */}
-					<select value={this.state.weekEndingFormat} onChange={this.handleWeekEndingChange}>
-						<option value="2021-01-09" disabled={!this.state.weekEndingChecks[0]}>2021-01-09</option>
-						<option value="2021-01-16" disabled={!this.state.weekEndingChecks[1]}>2021-01-16</option>
-						<option value="2021-01-23" disabled={!this.state.weekEndingChecks[2]}>2021-01-23</option>
-						<option value="2021-01-30" disabled={!this.state.weekEndingChecks[3]}>2021-01-30</option>
-						<option value="2021-02-06" disabled={!this.state.weekEndingChecks[4]}>2021-02-06</option>
-						<option value="2021-02-13" disabled={!this.state.weekEndingChecks[5]}>2021-02-13</option>
-						<option value="2021-02-20" disabled={!this.state.weekEndingChecks[6]}>2021-02-20</option>
-						<option value="2021-02-27" disabled={!this.state.weekEndingChecks[7]}>2021-02-27</option>
-						<option value="2021-03-06" disabled={!this.state.weekEndingChecks[8]}>2021-03-06</option>
-						<option value="2021-03-13" disabled={!this.state.weekEndingChecks[9]}>2021-03-13</option>
-						<option value="2021-03-20" disabled={!this.state.weekEndingChecks[10]}>2021-03-20</option>
-						<option value="2021-03-27" disabled={!this.state.weekEndingChecks[11]}>2021-03-27</option>
-						<option value="2021-04-03" disabled={!this.state.weekEndingChecks[12]}>2021-04-03</option>
-						<option value="2021-04-10" disabled={!this.state.weekEndingChecks[13]}>2021-04-10</option>
-						<option value="2021-04-17" disabled={!this.state.weekEndingChecks[14]}>2021-04-17</option>
-						<option value="2021-04-24" disabled={!this.state.weekEndingChecks[15]}>2021-04-24</option>
-						<option value="2021-05-01" disabled={!this.state.weekEndingChecks[16]}>2021-05-01</option>
-						<option value="2021-05-08" disabled={!this.state.weekEndingChecks[17]}>2021-05-08</option>
-						<option value="2021-05-15" disabled={!this.state.weekEndingChecks[18]}>2021-05-15</option>
-						<option value="2021-05-22" disabled={!this.state.weekEndingChecks[19]}>2021-05-22</option>
-						<option value="2021-05-29" disabled={!this.state.weekEndingChecks[20]}>2021-05-29</option>
-						<option value="2021-06-05" disabled={!this.state.weekEndingChecks[21]}>2021-06-05</option>
-						<option value="2021-06-12" disabled={!this.state.weekEndingChecks[22]}>2021-06-12</option>
-						<option value="2021-06-19" disabled={!this.state.weekEndingChecks[23]}>2021-06-19</option>
-						<option value="2021-06-26" disabled={!this.state.weekEndingChecks[24]}>2021-06-26</option>
-						<option value="2021-07-03" disabled={!this.state.weekEndingChecks[25]}>2021-07-03</option>
-						<option value="2021-07-10" disabled={!this.state.weekEndingChecks[26]}>2021-07-10</option>
-						<option value="2021-07-17" disabled={!this.state.weekEndingChecks[27]}>2021-07-17</option>
-						<option value="2021-07-24" disabled={!this.state.weekEndingChecks[28]}>2021-07-24</option>
-						<option value="2021-07-31" disabled={!this.state.weekEndingChecks[29]}>2021-07-31</option>
-						<option value="2021-08-07" disabled={!this.state.weekEndingChecks[30]}>2021-08-07</option>
-						<option value="2021-08-14" disabled={!this.state.weekEndingChecks[31]}>2021-08-14</option>
-						<option value="2021-08-21" disabled={!this.state.weekEndingChecks[32]}>2021-08-21</option>
-						<option value="2021-08-28" disabled={!this.state.weekEndingChecks[33]}>2021-08-28</option>
-						<option value="2021-09-04" disabled={!this.state.weekEndingChecks[34]}>2021-09-04</option>
-						<option value="2021-09-11" disabled={!this.state.weekEndingChecks[35]}>2021-09-11</option>
-						<option value="2021-09-18" disabled={!this.state.weekEndingChecks[36]}>2021-09-18</option>
-						<option value="2021-09-25" disabled={!this.state.weekEndingChecks[37]}>2021-09-25</option>
-						<option value="2021-10-02" disabled={!this.state.weekEndingChecks[38]}>2021-10-02</option>
-						<option value="2021-10-09" disabled={!this.state.weekEndingChecks[39]}>2021-10-09</option>
-						<option value="2021-10-16" disabled={!this.state.weekEndingChecks[40]}>2021-10-16</option>
-						<option value="2021-10-23" disabled={!this.state.weekEndingChecks[41]}>2021-10-23</option>
-						<option value="2021-10-30" disabled={!this.state.weekEndingChecks[42]}>2021-10-30</option>
-						<option value="2021-11-06" disabled={!this.state.weekEndingChecks[43]}>2021-11-06</option>
-						<option value="2021-11-13" disabled={!this.state.weekEndingChecks[44]}>2021-11-13</option>
-						<option value="2021-11-20" disabled={!this.state.weekEndingChecks[45]}>2021-11-20</option>
-						<option value="2021-11-27" disabled={!this.state.weekEndingChecks[46]}>2021-11-27</option>
-						<option value="2021-12-04" disabled={!this.state.weekEndingChecks[47]}>2021-12-04</option>
-						<option value="2021-12-11" disabled={!this.state.weekEndingChecks[48]}>2021-12-11</option>
-						<option value="2021-12-18" disabled={!this.state.weekEndingChecks[49]}>2021-12-18</option>
-						<option value="2021-12-25" disabled={!this.state.weekEndingChecks[50]}>2021-12-25</option>
-					</select>
+					<tr>
+						<th>
+							<label htmlFor="weekEnding">Week Ending</label>
+							{/* <input id="weekEnding" type="date" value={this.state.weekEndingFormat} onChange={this.handleWeekEndingChange} /> */}
+							<select value={this.state.weekEndingFormat} onChange={this.handleWeekEndingChange}>
+								<option value="2021-01-09" disabled={!this.state.weekEndingChecks[0]}>2021-01-09</option>
+								<option value="2021-01-16" disabled={!this.state.weekEndingChecks[1]}>2021-01-16</option>
+								<option value="2021-01-23" disabled={!this.state.weekEndingChecks[2]}>2021-01-23</option>
+								<option value="2021-01-30" disabled={!this.state.weekEndingChecks[3]}>2021-01-30</option>
+								<option value="2021-02-06" disabled={!this.state.weekEndingChecks[4]}>2021-02-06</option>
+								<option value="2021-02-13" disabled={!this.state.weekEndingChecks[5]}>2021-02-13</option>
+								<option value="2021-02-20" disabled={!this.state.weekEndingChecks[6]}>2021-02-20</option>
+								<option value="2021-02-27" disabled={!this.state.weekEndingChecks[7]}>2021-02-27</option>
+								<option value="2021-03-06" disabled={!this.state.weekEndingChecks[8]}>2021-03-06</option>
+								<option value="2021-03-13" disabled={!this.state.weekEndingChecks[9]}>2021-03-13</option>
+								<option value="2021-03-20" disabled={!this.state.weekEndingChecks[10]}>2021-03-20</option>
+								<option value="2021-03-27" disabled={!this.state.weekEndingChecks[11]}>2021-03-27</option>
+								<option value="2021-04-03" disabled={!this.state.weekEndingChecks[12]}>2021-04-03</option>
+								<option value="2021-04-10" disabled={!this.state.weekEndingChecks[13]}>2021-04-10</option>
+								<option value="2021-04-17" disabled={!this.state.weekEndingChecks[14]}>2021-04-17</option>
+								<option value="2021-04-24" disabled={!this.state.weekEndingChecks[15]}>2021-04-24</option>
+								<option value="2021-05-01" disabled={!this.state.weekEndingChecks[16]}>2021-05-01</option>
+								<option value="2021-05-08" disabled={!this.state.weekEndingChecks[17]}>2021-05-08</option>
+								<option value="2021-05-15" disabled={!this.state.weekEndingChecks[18]}>2021-05-15</option>
+								<option value="2021-05-22" disabled={!this.state.weekEndingChecks[19]}>2021-05-22</option>
+								<option value="2021-05-29" disabled={!this.state.weekEndingChecks[20]}>2021-05-29</option>
+								<option value="2021-06-05" disabled={!this.state.weekEndingChecks[21]}>2021-06-05</option>
+								<option value="2021-06-12" disabled={!this.state.weekEndingChecks[22]}>2021-06-12</option>
+								<option value="2021-06-19" disabled={!this.state.weekEndingChecks[23]}>2021-06-19</option>
+								<option value="2021-06-26" disabled={!this.state.weekEndingChecks[24]}>2021-06-26</option>
+								<option value="2021-07-03" disabled={!this.state.weekEndingChecks[25]}>2021-07-03</option>
+								<option value="2021-07-10" disabled={!this.state.weekEndingChecks[26]}>2021-07-10</option>
+								<option value="2021-07-17" disabled={!this.state.weekEndingChecks[27]}>2021-07-17</option>
+								<option value="2021-07-24" disabled={!this.state.weekEndingChecks[28]}>2021-07-24</option>
+								<option value="2021-07-31" disabled={!this.state.weekEndingChecks[29]}>2021-07-31</option>
+								<option value="2021-08-07" disabled={!this.state.weekEndingChecks[30]}>2021-08-07</option>
+								<option value="2021-08-14" disabled={!this.state.weekEndingChecks[31]}>2021-08-14</option>
+								<option value="2021-08-21" disabled={!this.state.weekEndingChecks[32]}>2021-08-21</option>
+								<option value="2021-08-28" disabled={!this.state.weekEndingChecks[33]}>2021-08-28</option>
+								<option value="2021-09-04" disabled={!this.state.weekEndingChecks[34]}>2021-09-04</option>
+								<option value="2021-09-11" disabled={!this.state.weekEndingChecks[35]}>2021-09-11</option>
+								<option value="2021-09-18" disabled={!this.state.weekEndingChecks[36]}>2021-09-18</option>
+								<option value="2021-09-25" disabled={!this.state.weekEndingChecks[37]}>2021-09-25</option>
+								<option value="2021-10-02" disabled={!this.state.weekEndingChecks[38]}>2021-10-02</option>
+								<option value="2021-10-09" disabled={!this.state.weekEndingChecks[39]}>2021-10-09</option>
+								<option value="2021-10-16" disabled={!this.state.weekEndingChecks[40]}>2021-10-16</option>
+								<option value="2021-10-23" disabled={!this.state.weekEndingChecks[41]}>2021-10-23</option>
+								<option value="2021-10-30" disabled={!this.state.weekEndingChecks[42]}>2021-10-30</option>
+								<option value="2021-11-06" disabled={!this.state.weekEndingChecks[43]}>2021-11-06</option>
+								<option value="2021-11-13" disabled={!this.state.weekEndingChecks[44]}>2021-11-13</option>
+								<option value="2021-11-20" disabled={!this.state.weekEndingChecks[45]}>2021-11-20</option>
+								<option value="2021-11-27" disabled={!this.state.weekEndingChecks[46]}>2021-11-27</option>
+								<option value="2021-12-04" disabled={!this.state.weekEndingChecks[47]}>2021-12-04</option>
+								<option value="2021-12-11" disabled={!this.state.weekEndingChecks[48]}>2021-12-11</option>
+								<option value="2021-12-18" disabled={!this.state.weekEndingChecks[49]}>2021-12-18</option>
+								<option value="2021-12-25" disabled={!this.state.weekEndingChecks[50]}>2021-12-25</option>
+							</select>
+						</th>
 
-					<label htmlFor="billingHours">Total Billing Hours</label>
-					<textarea id="billingHours" value={this.state.totalBillingHours} rows="1" cols="10" disabled />
-					<label htmlFor="compensatedHours">Total Compensated Hours</label>
-					<textarea id="compensatedHours" value={this.state.totalCompensatedHours} rows="1" cols="10" disabled />
-					<button
-						type="button"
-						onClick={this.handleDefault}
-					>
-						Set Default
-					</button>
-					{['right'].map((placement) => (
-						<OverlayTrigger
-							key={placement}
-							placement={placement}
-							overlay={
-								<Tooltip id={`tooltip-${placement}`}>
-									Save daily hours as default;
-									future weekly timesheet will show same hours.
-								</Tooltip>
-							}
-						>
-							< img src="https://img.icons8.com/color/25/000000/info--v1.png" />
-						</OverlayTrigger>
-					))}
+						<th>
+							<label htmlFor="billingHours">Total Billing Hours</label>
+							<textarea id="billingHours" value={this.state.totalBillingHours} rows="1" cols="10" disabled />
+						</th>
+						<th>
+							<label htmlFor="compensatedHours">Total Compensated Hours</label>
+							<textarea id="compensatedHours" value={this.state.totalCompensatedHours} rows="1" cols="10" disabled />
+						</th>
+						<th>
+							<button
+								type="button"
+								onClick={this.handleDefault}
+							>
+								Set Default
+							</button>
+							{['right'].map((placement) => (
+								<OverlayTrigger
+									key={placement}
+									placement={placement}
+									overlay={
+										<Tooltip id={`tooltip-${placement}`}>
+											Save daily hours as default;
+											future weekly timesheet will show same hours.
+										</Tooltip>
+									}
+								>
+									< img src="https://img.icons8.com/color/25/000000/info--v1.png" />
+								</OverlayTrigger>
+							))}
+						</th>
+
+					</tr>
 
 				</div>
 

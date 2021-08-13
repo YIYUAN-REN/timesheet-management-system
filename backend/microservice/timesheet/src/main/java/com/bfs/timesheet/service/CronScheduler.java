@@ -9,21 +9,9 @@ public class CronScheduler {
 
 	@Scheduled(cron = "* * * * * SAT")
 	public void updateTemplate() {
-		
 		final String uri = "http://localhost:8082/timesheet/postScheduleTimesheet";
-
 	    RestTemplate restTemplate = new RestTemplate();
-	    
-	    
-	   // String test = 
-	    		restTemplate.getForObject(uri, String.class);
-
-	     
-	
-	
-	
-	System.out.println(" Update Weekly Template ");
-		
+	    restTemplate.getForObject(uri, String.class);
+		System.out.println(" Update Weekly Template ");
 	}
-	
 }

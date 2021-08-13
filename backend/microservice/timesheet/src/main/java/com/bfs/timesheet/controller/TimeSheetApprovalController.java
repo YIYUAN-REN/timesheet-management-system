@@ -38,7 +38,7 @@ public class TimeSheetApprovalController {
 		Timesheet timesheet = timesheetService.getTimesheet(userId, weekEnding);
 		if (operation.equals("approve")) {
 			timesheet.setApprovalStatus("Approve");
-
+			timesheet.setSubmissionStatus("Complete");
 			String testSend = "userid is:" + userId + ":and is:approved";   // testSend.split(":");
 			rabbitTemplate.convertAndSend("timesheetapproval","status",testSend);
 
