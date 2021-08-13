@@ -66,16 +66,32 @@ class Timesheet extends Component {
 
 						if (curDate.includes(Holidays[j])) {
 							tempDays[i]['isHoliday'] = true;
+
+
+
+							timesheet.totalCompensatedHours = timesheet.totalCompensatedHours + 8;
+
+							let hours = 0;
+
+
+
+							if (tempDays[i].endTime == "N/A" || tempDays[i].startTime == "N/A" || this.getNumberTime(tempDays[i].endTime) - this.getNumberTime(tempDays[i].startTime) < 0) {
+								continue;
+							}
+							else {
+								hours += this.getNumberTime(tempDays[i].endTime) - this.getNumberTime(tempDays[i].startTime);
+								timesheet.totalBillingHours = timesheet.totalBillingHours - hours;
+
+							}
+
+
 							tempDays[i]['startTime'] = 'N/A';
 							tempDays[i]['endTime'] = 'N/A';
 
-							this.setState({ totalCompensatedHours: this.state.totalCompensatedHours + 8 });
-							this.setState({ totalBillingHours: this.state.totalBillingHours + 8 });
+							// this.setState({totalCompensatedHours : this.state.totalCompensatedHours +8 });
+							// this.setState({totalBillingHours: this.state.totalBillingHours +8 });
 							this.setState({ days: tempDays });
-
-
 						}
-
 					}
 
 				}
