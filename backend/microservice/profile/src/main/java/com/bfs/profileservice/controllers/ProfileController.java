@@ -67,13 +67,8 @@ public class ProfileController {
     	}else {
         	pu = new ProfileUser();
             
-        	
-        	
-    		
     	}
     	
-    	
-
     	return pu;
     }
     

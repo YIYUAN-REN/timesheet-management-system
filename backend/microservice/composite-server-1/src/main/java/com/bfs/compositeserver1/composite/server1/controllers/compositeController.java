@@ -4,11 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import com.bfs.compositeserver1.composite.server1.domains.ProfileUser;
+import com.bfs.compositeserver1.composite.server1.services.RemoteCallService;
 import com.bfs.compositeserver1.domains.Timesheet;
 
  
@@ -20,6 +23,9 @@ public class compositeController {
 	
 	
 	private  RestTemplate restTemplate;
+	
+	@Autowired
+	private RemoteCallService feignRemoteCallService;
 	
 	@Autowired
 	public void setRestTemplate(RestTemplateBuilder builder) {
@@ -50,5 +56,17 @@ public class compositeController {
 //    	return timeSheet;
        
     }
+    
+    
+    //feign client call
+    @GetMapping("/getprofilefeign/{uid}")
+    public ProfileUser getProfile(@PathVariable Integer uid) {
+    	
+    	return feignRemoteCallService.getProfile(uid);
+    	
+    }
+    
+    
+    
 
 }
